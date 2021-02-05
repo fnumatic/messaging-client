@@ -1,0 +1,56 @@
+= cljs-reframe-template
+
+A starter https://github.com/Day8/re-frame[re-frame] application.
+
+frontend routing with https://github.com/metosin/reitit[reitit]
+
+dev tooling with shadow-cljs
+
+styles per inline injection with https://github.com/noprompt/garden[CSS Garden]
+
+styles via TailwindCSS https://tailwindcss.com/ 
+
+== Development Mode
+
+
+----
+npx shadow-cljs watch app
+----
+
+
+=== Compile application
+
+----
+npx shadow-cljs compile app
+----
+
+----
+npx shadow-cljs release app
+----
+
+=== CSS via Tailwind
+
+* purge CSS
+
+----
+npm run-script tw
+----
+
+=== Run application:
+
+
+
+Wait a bit, then browse to http://localhost:8021.
+
+== Using babashka
+
+https://github.com/babashka/babashka[babashka]
+
+----
+./run watch
+./run compile
+./run release
+./run purgecss
+./run buildreport
+----
+

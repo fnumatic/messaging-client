@@ -1,0 +1,17 @@
+/*.log
+/target
+/*-init.clj
+/resources/public/js/compiled
+out
+.nrepl-port
+.rebel_readline_history
+
+/resources/public/js
+/node_modules
+package-lock.json
+/.shadow-cljs
+/.cpcache
+/.clj-kondo
+/.lsp
+/.calva
+/.vscode
