@@ -58,29 +58,62 @@
 (def small-sb " text-xs font-semibold ")
 (def large-sb " text-2xl font-semibold ")
 
+(def conversation-css
+  {:conv/top        {:class (str flex-col "w-3/5 border-l border-r border-gray-400")}
+   :conv/main       {:class "flex-auto overflow-y-auto p-5 space-y-4"
+                     :style {:background-image conversation-background-img}}
+   :conv/convinput  {:class "flex-none h-40 p-4 pt-0"}
+   :conv/textarea   {:class "w-full h-full outline-none border focus:border-blue-600 hover:border-blue-600 rounded p-4 shadow-lg"}
 
+   :hint/top        {:class (str flex-row "justify-center text-sm text-gray-600")}
 
+   :part/top        {:class (str flex-row "space-x-2 ")}
+   :part/topreverse {:class (str flex-row "space-x-2 flex-row-reverse space-x-reverse")}
+   :part/iconc      {:class "flex-none w-6 h-6"}
+   :part/cont       {:class flex-col}
+   :part/msgc       {:class "bg-gray-200 rounded p-5"}
+   :part/timec      {:class "text-sm text-gray-600"}
 
+   :action/iconc    {:class "w-4 h-4"}
+
+   :header/top {:class (str flex-row justify-center "flex-none h-20 p-5 border-b")}
+   :header/person-top {:class (str flex-col "space-y-1")}
+   :header/input {:class "text-sm outline-none border-b border-dashed text-black placeholder-gray-600"}
+   :header/act-cont {:class (str flex-row center-x-spacing)}
+   :settings/top {:class (str flex-col "w-1/5 bg-gray-200 overflow-y-auto")}
+   :settings/part1 {:class (str flex-col "h-64 flex-none border-b border-gray-400")}
+   :settings/container {:class (str flex-col "space-y-4 p-4")}})
+
+(def sidebar-css
+  {:main/top {:class (str flex-col justify-center "flex-none w-16 bg-gray-200")}
+   :main/container {:class (str flex-col "w-full pt-5")}
+   
+   :item/top {:class (str  flex-row justify-center "block relative w-full p-4 h-16 w-16" ) }
+   :item/topactive {:class (str  flex-row justify-center "block relative w-full p-4 h-16 w-16 bg-gray-100" )}
+   :item/iconc {:class "flex-none w-7 h-7"}
+   :item/nonicon {:class "rounded-full bg-gray-400 w-8 h-8"}
+   :item/countc {:class "absolute top-0 right-0 mr-3 mt-3 bg-red-500 w-4 h-4 text-xs text-white rounded-full text-center"}})
 
 (defn sidebar-item [{:keys [count icon active?]}]
-  (let [bg (when active? " bg-gray-100 ")]
-   [:a {:class (str  flex-row justify-center "block relative w-full p-4 h-16 w-16" bg)
-        :href "#"}
+  (let [{:item/keys [top topactive iconc nonicon countc]} sidebar-css
+        top (if active? topactive top)]
+   [:a  (merge top  {:href "#"})
     (if icon
-      [svg {:class "flex-none w-7 h-7"} icon]
-      [:div {:class "rounded-full bg-gray-400 w-8 h-8"}])
+      [svg iconc icon]
+      [:div nonicon])
     (when count
-      [:div {:class "absolute top-0 right-0 mr-3 mt-3 bg-red-500 w-4 h-4 text-xs text-white rounded-full text-center"} count])]))
+      [:div countc count])]))
 
 
 
 (defn sidebar [{:keys [sidebar-items1 sidebar-items2]}]
-  [:div#sidebar {:class (str flex-col justify-center "flex-none w-16 bg-gray-200")}
-    [:div {:class (str flex-col "w-full pt-5")}
+  (let [{:main/keys [top container]} sidebar-css]
+   [:div#sidebar top
+    [:div container
      (u/spread-by-order sidebar-item sidebar-items1)]
-     
-    [:div {:class (str flex-col "w-full pb-5")}
-     (u/spread-by-order sidebar-item sidebar-items2)]])
+
+    [:div container
+     (u/spread-by-order sidebar-item sidebar-items2)]]))
 
 (defn conversation-view [{:keys [icon name count]}]
   [:div {:class (str flex-row center-x-spacing " ml-1 text-xs")}
@@ -170,31 +203,7 @@
     (u/spread-by-id conversation-block cbd-list)]])
 
 
-(def conversation-css
-  {:conv/top        {:class (str flex-col "w-3/5 border-l border-r border-gray-400")}
-   :conv/main       {:class "flex-auto overflow-y-auto p-5 space-y-4"
-                     :style {:background-image conversation-background-img}}
-   :conv/convinput  {:class "flex-none h-40 p-4 pt-0"}
-   :conv/textarea   {:class "w-full h-full outline-none border focus:border-blue-600 hover:border-blue-600 rounded p-4 shadow-lg"}
-   
-   :hint/top        {:class (str flex-row "justify-center text-sm text-gray-600")}
-   
-   :part/top        {:class (str flex-row "space-x-2 ")}
-   :part/topreverse {:class (str flex-row "space-x-2 flex-row-reverse space-x-reverse")}
-   :part/iconc      {:class "flex-none w-6 h-6"}
-   :part/cont       {:class flex-col}
-   :part/msgc       {:class "bg-gray-200 rounded p-5"}
-   :part/timec      {:class "text-sm text-gray-600"}
 
-   :action/iconc    {:class "w-4 h-4"}
-
-   :header/top {:class (str flex-row justify-center "flex-none h-20 p-5 border-b")}
-   :header/person-top {:class (str flex-col "space-y-1")}
-   :header/input {:class "text-sm outline-none border-b border-dashed text-black placeholder-gray-600"}
-   :header/act-cont {:class (str flex-row center-x-spacing)}
-
-
-   ,})
 
 (defn conversation-header-action [{:keys [icon]}]
   (let [{:action/keys [iconc]} conversation-css]
@@ -251,15 +260,13 @@
   [:div {:class (str flex-row justify-center "flex-none h-64 bg-white border rounded p-4")} "card content"])
 
 (defn conversation-settings []
-  [:div#conversation-settings 
-   {:class (str flex-col "w-1/5 bg-gray-200 overflow-y-auto")}
-   [:div 
-    {:class (str flex-col "h-64 flex-none border-b border-gray-400")}]
-   [:div 
-    {:class (str flex-col "space-y-4 p-4")}
-    [card]
-    [card]
-    [card]]])
+  (let [{:settings/keys [top part1 container]} conversation-css]
+   [:div#conversation-settings top
+    [:div part1]
+    [:div container
+     [card]
+     [card]
+     [card]]]))
 
 (def pageconfig
   {::sidebar              {:defaults db/data
