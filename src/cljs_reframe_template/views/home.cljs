@@ -115,19 +115,19 @@
     [:div container
      (u/spread-by-order sidebar-item sidebar-items2)]]))
 
-(defn conversation-view [{:keys [icon name count]}]
+(defn inbox-view [{:keys [icon name count]}]
   [:div {:class (str flex-row center-x-spacing " ml-1 text-xs")}
    [svg {:class   "w-5 h-5"} icon]
 
    [:div {:class "flex-grow "} name]
    [:div {:class "text-gray-600 "} count]])
 
-(defn conversation-view-expand [{:keys [ msg action]}]
+(defn inbox-view-expand [{:keys [ msg action]}]
   [:div {:class (str flex-row center-x-spacing small-sb "ml-1 text-gray-600")}
    [:div {:class "flex-grow "} msg]
    [:button {:class (str small-sb "text-gray-600")}  action]])
 
-(defn conversation-action [{:keys [icon name]}]
+(defn inbox-action [{:keys [icon name]}]
   [:div {:class (str flex-row center-x-spacing "ml-1")}
    [svg {:class  "w-5 h-5"} icon]
 
@@ -156,16 +156,16 @@
      [svg {:class "flex-none w-4 h-4"} v/search-icon]]
     [inbox-block {:title "Conversations" :open? true}
      [:<>
-      (u/spread-by-id conversation-view conversation-views)
-      [conversation-action {:icon v/plus :name "Create View"}]
-      [conversation-view-expand {:msg "See 124 more" :action "Edit"}]]]
+      (u/spread-by-id inbox-view conversation-views)
+      [inbox-action {:icon v/plus :name "Create View"}]
+      [inbox-view-expand {:msg "See 124 more" :action "Edit"}]]]
     [inbox-block {:title "Automation"}
      [:<>
-      [conversation-action {:icon v/plus :name "Create Automation"}]
-      [conversation-view-expand {:msg "See 42 more" :action "Edit"}]]]   
+      [inbox-action {:icon v/plus :name "Create Automation"}]
+      [inbox-view-expand {:msg "See 42 more" :action "Edit"}]]]   
     [inbox-block {:title "Your preferences"}]])  
 
-(defn conversation-block [{:keys [person time msg current]}]
+(defn stream-block [{:keys [person time msg current]}]
   (let [ blockcss (if current "border-blue-500 bg-blue-100 " "border-transparent hover:bg-gray-100 ")]
    [:a.conversation-block {:class "block border-b "}
     [:div {:class (str blockcss "border-l-2 p-3 space-y-4")}
@@ -200,7 +200,7 @@
    [stream-header {:icon v/menu-alt-1 :name "You"}]
    [stream-menu]
    [:div {:class "flex-auto overflow-y-auto"}
-    (u/spread-by-id conversation-block cbd-list)]])
+    (u/spread-by-id stream-block cbd-list)]])
 
 
 
