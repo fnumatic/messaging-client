@@ -59,40 +59,61 @@
 (def large-sb " text-2xl font-semibold ")
 
 (def conversation-css
-  {:conv/top        {:class (str flex-col "w-3/5 border-l border-r border-gray-400")}
-   :conv/main       {:class "flex-auto overflow-y-auto p-5 space-y-4"
-                     :style {:background-image conversation-background-img}}
-   :conv/convinput  {:class "flex-none h-40 p-4 pt-0"}
-   :conv/textarea   {:class "w-full h-full outline-none border focus:border-blue-600 hover:border-blue-600 rounded p-4 shadow-lg"}
+  {:conv/top           {:class (str flex-col "w-3/5 border-l border-r border-gray-400")}
+   :conv/main          {:class "flex-auto overflow-y-auto p-5 space-y-4"
+                        :style {:background-image conversation-background-img}}
+   :conv/convinput     {:class "flex-none h-40 p-4 pt-0"}
+   :conv/textarea      {:class "w-full h-full outline-none border focus:border-blue-600 hover:border-blue-600 rounded p-4 shadow-lg"}
 
-   :hint/top        {:class (str flex-row "justify-center text-sm text-gray-600")}
+   :hint/top           {:class (str flex-row "justify-center text-sm text-gray-600")}
 
-   :part/top        {:class (str flex-row "space-x-2 ")}
-   :part/topreverse {:class (str flex-row "space-x-2 flex-row-reverse space-x-reverse")}
-   :part/iconc      {:class "flex-none w-6 h-6"}
-   :part/cont       {:class flex-col}
-   :part/msgc       {:class "bg-gray-200 rounded p-5"}
-   :part/timec      {:class "text-sm text-gray-600"}
+   :part/top           {:class (str flex-row "space-x-2 ")}
+   :part/topreverse    {:class (str flex-row "space-x-2 flex-row-reverse space-x-reverse")}
+   :part/iconc         {:class "flex-none w-6 h-6"}
+   :part/cont          {:class flex-col}
+   :part/msgc          {:class "bg-gray-200 rounded p-5"}
+   :part/timec         {:class "text-sm text-gray-600"}
 
-   :action/iconc    {:class "w-4 h-4"}
+   :action/iconc       {:class "w-4 h-4"}
 
-   :header/top {:class (str flex-row justify-center "flex-none h-20 p-5 border-b")}
-   :header/person-top {:class (str flex-col "space-y-1")}
-   :header/input {:class "text-sm outline-none border-b border-dashed text-black placeholder-gray-600"}
-   :header/act-cont {:class (str flex-row center-x-spacing)}
-   :settings/top {:class (str flex-col "w-1/5 bg-gray-200 overflow-y-auto")}
-   :settings/part1 {:class (str flex-col "h-64 flex-none border-b border-gray-400")}
+   :header/top         {:class (str flex-row justify-center "flex-none h-20 p-5 border-b")}
+   :header/person-top  {:class (str flex-col "space-y-1")}
+   :header/input       {:class "text-sm outline-none border-b border-dashed text-black placeholder-gray-600"}
+   :header/act-cont    {:class (str flex-row center-x-spacing)}
+   :settings/top       {:class (str flex-col "w-1/5 bg-gray-200 overflow-y-auto")}
+   :settings/part1     {:class (str flex-col "h-64 flex-none border-b border-gray-400")}
    :settings/container {:class (str flex-col "space-y-4 p-4")}})
 
 (def sidebar-css
-  {:main/top {:class (str flex-col justify-center "flex-none w-16 bg-gray-200")}
+  {:main/top       {:class (str flex-col justify-center "flex-none w-16 bg-gray-200")}
    :main/container {:class (str flex-col "w-full pt-5")}
    
-   :item/top {:class (str  flex-row justify-center "block relative w-full p-4 h-16 w-16" ) }
-   :item/topactive {:class (str  flex-row justify-center "block relative w-full p-4 h-16 w-16 bg-gray-100" )}
-   :item/iconc {:class "flex-none w-7 h-7"}
-   :item/nonicon {:class "rounded-full bg-gray-400 w-8 h-8"}
-   :item/countc {:class "absolute top-0 right-0 mr-3 mt-3 bg-red-500 w-4 h-4 text-xs text-white rounded-full text-center"}})
+   :item/top       {:class (str  flex-row justify-center "block relative w-full p-4 h-16 w-16")}
+   :item/topactive {:class (str  flex-row justify-center "block relative w-full p-4 h-16 w-16 bg-gray-100")}
+   :item/iconc     {:class "flex-none w-7 h-7"}
+   :item/nonicon   {:class "rounded-full bg-gray-400 w-8 h-8"}
+   :item/countc    {:class "absolute top-0 right-0 mr-3 mt-3 bg-red-500 w-4 h-4 text-xs text-white rounded-full text-center"}})
+
+(def stream-css
+  {:you/top         {:class (str flex-col "w-1/5")}
+   :you/blocks      {:class "flex-auto overflow-y-auto"}
+
+   :menu/top        {:class (str flex-row justify-center "h-8 p-3 text-xs")}
+   :menu/container  {:class (str flex-row justify-center "space-x-2")}
+
+   :header/top      {:class (str flex-row center-x-spacing "p-3 ")}
+   :header/svgc     {:class "flex-none w-5 h-5"}
+   :header/h1       {:class (str large-sb "flex-grow")}
+
+   :block/top       {:class "block border-b "}
+   :block/currentc  {:class "border-blue-500 bg-blue-100 border-l-2 p-3 space-y-4"}
+   :block/nocurrent {:class "border-transparent hover:bg-gray-100 border-l-2 p-3 space-y-4"}
+   :block/container {:class (str flex-row center-x-spacing)}
+   :block/svg-big   {:class "w-5 h-5"}
+   :block/svg-small {:class "flex-none w-3 h-3"}
+   :block/personc   {:class "flex-grow text-sm"}
+   :block/timec     {:class "text-xs text-gray-600"}
+   :block/msgc      {:class "flex-grow truncate text-xs"}})
 
 (defn sidebar-item [{:keys [count icon active?]}]
   (let [{:item/keys [top topactive iconc nonicon countc]} sidebar-css
@@ -103,8 +124,6 @@
       [:div nonicon])
     (when count
       [:div countc count])]))
-
-
 
 (defn sidebar [{:keys [sidebar-items1 sidebar-items2]}]
   (let [{:main/keys [top container]} sidebar-css]
@@ -166,43 +185,43 @@
     [inbox-block {:title "Your preferences"}]])  
 
 (defn stream-block [{:keys [person time msg current]}]
-  (let [ blockcss (if current "border-blue-500 bg-blue-100 " "border-transparent hover:bg-gray-100 ")]
-   [:a.conversation-block {:class "block border-b "}
-    [:div {:class (str blockcss "border-l-2 p-3 space-y-4")}
-     [:div {:class (str flex-row center-x-spacing "")}
-      [svg {:class   "w-5 h-5"} v/user-circle]
+  (let [{:block/keys [top currentc nocurrent container svg-big svg-small personc timec msgc]} stream-css 
+        blockcss (if current currentc nocurrent  )]
+   [:a.conversation-block top
+    [:div blockcss
+     [:div container
+      [svg svg-big v/user-circle]
 
-      [:strong {:class "flex-grow text-sm"} person]
-      [:div {:class "text-xs text-gray-600"} time]]
-     [:div {:class (str flex-row "items-center space-x-1")}
-      [svg {:class "flex-none w-3 h-3"} v/user-circle]
-      [:div {:class "flex-grow truncate text-xs"} msg]]]]))
+      [:strong personc person]
+      [:div timec time]]
+     [:div container
+      [svg svg-small v/user-circle]
+      [:div msgc msg]]]]))
 
 (defn stream-header [{:keys [icon name]}]
-  [:div {:class (str flex-row center-x-spacing "p-3 ")}
-   [svg {:class  "flex-none w-5 h-5"} icon]
-
-   [:h1 {:class (str large-sb "flex-grow")} name]])
+  (let [{:header/keys [top svgc h1]} stream-css]
+   [:div top
+    [svg svgc icon]
+    [:h1 h1 name]]))
 
 (defn stream-menu []
-  [:div {:class (str flex-row justify-center "h-8 p-3 text-xs")}
-   [:div {:class (str flex-row justify-center "space-x-2")}
-    [svg {} v/brief-case]
-    [:div 5]
-    [svg {} v/chevron-down]]
-   [:div {:class (str flex-row justify-center "space-x-2")}
-    [:div "newest"]
-    [svg {} v/chevron-down]]])
-
+  (let [{:menu/keys [top container]} stream-css]
+   [:div top
+    [:div container
+     [svg {} v/brief-case]
+     [:div 5]
+     [svg {} v/chevron-down]]
+    [:div container
+     [:div "newest"]
+     [svg {} v/chevron-down]]]))
 
 (defn you-stream [{:keys [cbd-list]}]
-  [:div#you-stream {:class (str flex-col "w-1/5")}
-   [stream-header {:icon v/menu-alt-1 :name "You"}]
-   [stream-menu]
-   [:div {:class "flex-auto overflow-y-auto"}
-    (u/spread-by-id stream-block cbd-list)]])
-
-
+  (let [{:you/keys [top blocks]} stream-css]
+   [:div#you-stream top
+    [stream-header {:icon v/menu-alt-1 :name "You"}]
+    [stream-menu]
+    [:div blocks
+     (u/spread-by-id stream-block cbd-list)]]))
 
 
 (defn conversation-header-action [{:keys [icon]}]
