@@ -1,4 +1,5 @@
 (ns cljs-reframe-template.views.home
+  {:clj-kondo/config '{:lint-as {reagent.core/with-let clojure.core/let}}}
   (:require
    [re-frame.core :as re-frame]
    [reagent.core :as r]
@@ -115,6 +116,31 @@
    :block/timec     {:class "text-xs text-gray-600"}
    :block/msgc      {:class "flex-grow truncate text-xs"}})
 
+(def inbox-css
+  {:inbox/top             {:class (str flex-col "w-64 flex-none bg-gray-100 p-4 space-y-6")}
+   :inbox/header          {:class (str flex-row justify-center "mb-6")}
+   :inbox/h1c             {:class large-sb}
+   :inbox/svgc            {:class "flex-none w-4 h-4"}
+
+   :block/top             {:class (str " space-y-3 ")}
+   :block/buttonc         {:class (str  justify-center "inline-flex focus:outline-none ")}
+   :block/svgc            {:class "flex-none w-3 h-3 ml-2"}
+   :block/container       {:class (str "space-y-3 pb-4")}
+   :block/containerhidden {:class (str "space-y-3 pb-4 hidden")}
+
+   :action/top            {:class (str flex-row center-x-spacing "ml-1")}
+   :action/svgc           {:class "w-5 h-5"}
+   :action/namec          {:class (str small-sb "flex-grow text-gray-600")}
+
+   :view/top              {:class (str flex-row center-x-spacing " ml-1 text-xs")}
+   :view/svgc             {:class "w-5 h-5"}
+   :view/namec            {:class "flex-grow "}
+   :view/countc           {:class "text-gray-600 "}
+
+   :expand/top            {:class (str flex-row center-x-spacing small-sb "ml-1 text-gray-600")}
+   :expand/msgc           {:class "flex-grow "}
+   :expand/buttonc        {:class (str small-sb "text-gray-600")}})
+
 (defn sidebar-item [{:keys [count icon active?]}]
   (let [{:item/keys [top topactive iconc nonicon countc]} sidebar-css
         top (if active? topactive top)]
@@ -135,44 +161,46 @@
      (u/spread-by-order sidebar-item sidebar-items2)]]))
 
 (defn inbox-view [{:keys [icon name count]}]
-  [:div {:class (str flex-row center-x-spacing " ml-1 text-xs")}
-   [svg {:class   "w-5 h-5"} icon]
+  (let [{:view/keys [top svgc namec countc]} inbox-css]
+   [:div top
+    [svg svgc icon]
 
-   [:div {:class "flex-grow "} name]
-   [:div {:class "text-gray-600 "} count]])
+    [:div namec name]
+    [:div countc count]]))
 
 (defn inbox-view-expand [{:keys [ msg action]}]
-  [:div {:class (str flex-row center-x-spacing small-sb "ml-1 text-gray-600")}
-   [:div {:class "flex-grow "} msg]
-   [:button {:class (str small-sb "text-gray-600")}  action]])
+  (let [{:expand/keys [top msgc buttonc]} inbox-css]
+   [:div top
+    [:div msgc msg]
+    [:button buttonc  action]]))
 
 (defn inbox-action [{:keys [icon name]}]
-  [:div {:class (str flex-row center-x-spacing "ml-1")}
-   [svg {:class  "w-5 h-5"} icon]
-
-   [:div {:class (str small-sb "flex-grow text-gray-600")} name]])
+  (let [{:action/keys [top svgc namec]} inbox-css]
+   [:div top
+    [svg svgc icon]
+    [:div namec name]]))
 
 (defn inbox-block [{:keys [title open?]} fragm]
-  (r/with-let [[open*? set-open] (use-state open?)]
+  (r/with-let [{:block/keys [top buttonc svgc container containerhidden]} inbox-css
+               [open*? set-open] (use-state open?)]
                
-    (let [
-          openui (if @open*? " h-64 " " h-1 ")
-          icon   (if @open*? v/chevron-down v/chevron-left)
-          border (when @open*? " border-b ")
-          display (when (not @open*?) " hidden ")]
-      [:div {:class (str " space-y-3 ")}
-       [:button {:class    (str  justify-center "inline-flex focus:outline-none ")
-                 :on-click #(set-open (not @open*?))}
+    (let [icon   (if @open*? v/chevron-down v/chevron-left)
+          container (if  @open*?  container containerhidden)]
+      [:div top
+       [:button (merge buttonc 
+                       {:on-click #(set-open (not @open*?))})
         title
-        [svg {:class "flex-none w-3 h-3 ml-2"} icon]]
-       [:div {:class (str "space-y-3 pb-4" display)}
+        [svg svgc icon]]
+       [:div container
         fragm]])))
+
         
 (defn inbox [{:keys [conversation-views]}]
-  [:div#inbox {:class (str flex-col "w-64 flex-none bg-gray-100 p-4 space-y-6")}
-    [:div {:class (str flex-row justify-center "mb-6")}
-     [:h1 {:class large-sb} "Inbox"]
-     [svg {:class "flex-none w-4 h-4"} v/search-icon]]
+  (let [ {:inbox/keys [top header h1c svgc]} inbox-css]
+   [:div#inbox top
+    [:div header
+     [:h1 h1c "Inbox"]
+     [svg svgc v/search-icon]]
     [inbox-block {:title "Conversations" :open? true}
      [:<>
       (u/spread-by-id inbox-view conversation-views)
@@ -181,8 +209,8 @@
     [inbox-block {:title "Automation"}
      [:<>
       [inbox-action {:icon v/plus :name "Create Automation"}]
-      [inbox-view-expand {:msg "See 42 more" :action "Edit"}]]]   
-    [inbox-block {:title "Your preferences"}]])  
+      [inbox-view-expand {:msg "See 42 more" :action "Edit"}]]]
+    [inbox-block {:title "Your preferences"}]]))  
 
 (defn stream-block [{:keys [person time msg current]}]
   (let [{:block/keys [top currentc nocurrent container svg-big svg-small personc timec msgc]} stream-css 
