@@ -1,46 +1,12 @@
-= cljs-reframe-template
+= A sample messaging client
 
-A starter https://github.com/Day8/re-frame[re-frame] application.
-
-frontend routing with https://github.com/metosin/reitit[reitit]
-
-dev tooling with shadow-cljs
-
-styles per inline injection with https://github.com/noprompt/garden[CSS Garden]
-
-styles via TailwindCSS https://tailwindcss.com/ 
-
-== Development Mode
+- see 
+    - https://play.tailwindcss.com/O2Uz6b4uLs
+    - https://www.intercom.com/
 
 
-----
-npx shadow-cljs watch app
-----
+https://fnumatic.github.io/messaging-client/
 
-
-=== Compile application
-
-----
-npx shadow-cljs compile app
-----
-
-----
-npx shadow-cljs release app
-----
-
-=== CSS via Tailwind
-
-* purge CSS
-
-----
-npm run-script tw
-----
-
-=== Run application:
-
-
-
-Wait a bit, then browse to http://localhost:8021.
 
 == Using babashka
 
