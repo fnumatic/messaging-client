@@ -1,8 +1,8 @@
 = A sample messaging client
 
 - see 
-    - https://play.tailwindcss.com/O2Uz6b4uLs
-    - https://www.intercom.com/
+-- https://play.tailwindcss.com/O2Uz6b4uLs
+-- https://www.intercom.com/
 
 
 https://fnumatic.github.io/messaging-client/
