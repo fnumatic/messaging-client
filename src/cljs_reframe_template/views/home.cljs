@@ -257,14 +257,18 @@
    [svg iconc icon]))
 
 (defn conversation-header [{:keys [person title actions]}]
-  (let [{:header/keys [top person-top input act-cont]} conversation-css]
+  (let [{:header/keys [top person-top input act-cont]} conversation-css
+        title  (or title "")]
    [:div top
     [:div person-top
      [:strong person]
      [:input (merge input
-              {:type "text", :placeholder "Add coversation title" :value title})]]
+              {:type "text", 
+               :placeholder "Add coversation title" 
+               :value title
+               :on-change identity})]]
     [:div act-cont
-     (u/spread-by-id conversation-header-action actions)]]))
+     (u/spread-by-order conversation-header-action actions)]]))
 
 
 (defn conversation-hint [{:keys [msg]}]
@@ -301,7 +305,8 @@
     [:div convinput
      [:textarea
       (merge textarea
-             {:value "Hi"})]]]))
+             {:value "Hi"
+              :on-change identity})]]]))
 
 (defn card []
   [:div {:class (str flex-row justify-center "flex-none h-64 bg-white border rounded p-4")} "card content"])
