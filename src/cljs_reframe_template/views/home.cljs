@@ -59,87 +59,84 @@
 (def small-sb " text-xs font-semibold ")
 (def large-sb " text-2xl font-semibold ")
 
+
 (def conversation-css
-  {:conv/top           {:class (str flex-col "w-3/5 border-l border-r border-gray-400")}
-   :conv/main          {:class "flex-auto overflow-y-auto p-5 space-y-4"
-                        :style {:background-image conversation-background-img}}
-   :conv/convinput     {:class "flex-none h-40 p-4 pt-0"}
-   :conv/textarea      {:class "w-full h-full outline-none border focus:border-blue-600 hover:border-blue-600 rounded p-4 shadow-lg"}
-
-   :hint/top           {:class (str flex-row "justify-center text-sm text-gray-600")}
-
-   :part/top           {:class (str flex-row "space-x-2 ")}
-   :part/topreverse    {:class (str flex-row "space-x-2 flex-row-reverse space-x-reverse")}
-   :part/iconc         {:class "flex-none w-6 h-6"}
-   :part/cont          {:class flex-col}
-   :part/msgc          {:class "bg-gray-200 rounded p-5"}
-   :part/timec         {:class "text-sm text-gray-600"}
-
-   :action/iconc       {:class "w-4 h-4"}
-
-   :header/top         {:class (str flex-row justify-center "flex-none h-20 p-5 border-b")}
-   :header/person-top  {:class (str flex-col "space-y-1")}
-   :header/input       {:class "text-sm outline-none border-b border-dashed text-black placeholder-gray-600"}
-   :header/act-cont    {:class (str flex-row center-x-spacing)}
-   :settings/top       {:class (str flex-col "w-1/5 bg-gray-200 overflow-y-auto")}
-   :settings/part1     {:class (str flex-col "h-64 flex-none border-b border-gray-400")}
-   :settings/container {:class (str flex-col "space-y-4 p-4")}})
+  {:action/iconc       {:class [:w-4 :h-4]}
+   
+   :card/top           {:class [:flex :flex-row :justify-between :items-center :flex-none :h-64 :bg-white :border :rounded :p-4]}
+   
+   :conv/convinput     {:class [:flex-none :h-40 :p-4 :pt-0]}
+   :conv/main          {:class [:flex-auto :overflow-y-auto :p-5 :space-y-4]
+                        :style {:background-image "url(https://static.intercomassets.com/ember/assets/images/messenger-backgrounds/background-1-99a36524645be823aabcd0e673cb47f8.png)"}}
+   :conv/textarea      {:class [:w-full :h-full :outline-none :border :focus:border-blue-600 :hover:border-blue-600 :rounded :p-4 :shadow-lg]}
+   :conv/top           {:class [:flex :flex-col "w-3/5" :border-l :border-r :border-gray-400]}
+   
+   :header/act-cont    {:class [:flex :flex-row :items-center :space-x-2]}
+   :header/input       {:class [:text-sm :outline-none :border-b :border-dashed :text-black :placeholder-gray-600]}
+   :header/person-top  {:class [:flex :flex-col :space-y-1]}
+   :header/top         {:class [:flex :flex-row :justify-between :items-center :flex-none :h-20 :p-5 :border-b]}
+   
+   :hint/top           {:class [:flex :flex-row :justify-center :text-sm :text-gray-600]}
+   
+   :part/cont          {:class [:flex :flex-col]}
+   :part/iconc         {:class [:flex-none :w-6 :h-6]}
+   :part/msgc          {:class [:bg-gray-200 :rounded :p-5]}
+   :part/timec         {:class [:text-sm :text-gray-600]}
+   :part/top           {:class [:flex :flex-row :space-x-2]}
+   :part/topreverse    {:class [:flex :flex-row :space-x-2 :flex-row-reverse :space-x-reverse]}
+   
+   :settings/container {:class [:flex :flex-col :space-y-4 :p-4]}
+   :settings/part1     {:class [:flex :flex-col :h-64 :flex-none :border-b :border-gray-400]}
+   :settings/top       {:class [:flex :flex-col "w-1/5" :bg-gray-200 :overflow-y-auto]}})
 
 (def sidebar-css
-  {:main/top       {:class (str flex-col justify-center "flex-none w-16 bg-gray-200")}
-   :main/container {:class (str flex-col "w-full pt-5")}
+  {:item/countc    {:class [:absolute :top-0 :right-0 :mr-3 :mt-3 :bg-red-500 :w-4 :h-4 :text-xs :text-white :rounded-full :text-center]}
+   :item/iconc     {:class [:flex-none :w-7 :h-7]}
+   :item/nonicon   {:class [:rounded-full :bg-gray-400 :w-8 :h-8]}
+   :item/top       {:class [:flex :flex-row :justify-between :items-center :block :relative :w-full :p-4 :h-16 :w-16]}
+   :item/topactive {:class [:flex :flex-row :justify-between :items-center :block :relative :w-full :p-4 :h-16 :w-16 :bg-gray-100]}
    
-   :item/top       {:class (str  flex-row justify-center "block relative w-full p-4 h-16 w-16")}
-   :item/topactive {:class (str  flex-row justify-center "block relative w-full p-4 h-16 w-16 bg-gray-100")}
-   :item/iconc     {:class "flex-none w-7 h-7"}
-   :item/nonicon   {:class "rounded-full bg-gray-400 w-8 h-8"}
-   :item/countc    {:class "absolute top-0 right-0 mr-3 mt-3 bg-red-500 w-4 h-4 text-xs text-white rounded-full text-center"}})
+   :main/container {:class [:flex :flex-col :w-full :pt-5]}
+   :main/top       {:class [:flex :flex-col :justify-between :items-center :flex-none :w-16 :bg-gray-200]}})
 
 (def stream-css
-  {:you/top         {:class (str flex-col "w-1/5")}
-   :you/blocks      {:class "flex-auto overflow-y-auto"}
-
-   :menu/top        {:class (str flex-row justify-center "h-8 p-3 text-xs")}
-   :menu/container  {:class (str flex-row justify-center "space-x-2")}
-
-   :header/top      {:class (str flex-row center-x-spacing "p-3 ")}
-   :header/svgc     {:class "flex-none w-5 h-5"}
-   :header/h1       {:class (str large-sb "flex-grow")}
-
-   :block/top       {:class "block border-b "}
-   :block/currentc  {:class "border-blue-500 bg-blue-100 border-l-2 p-3 space-y-4"}
-   :block/nocurrent {:class "border-transparent hover:bg-gray-100 border-l-2 p-3 space-y-4"}
-   :block/container {:class (str flex-row center-x-spacing)}
-   :block/svg-big   {:class "w-5 h-5"}
-   :block/svg-small {:class "flex-none w-3 h-3"}
-   :block/personc   {:class "flex-grow text-sm"}
-   :block/timec     {:class "text-xs text-gray-600"}
-   :block/msgc      {:class "flex-grow truncate text-xs"}})
+  {:block/container {:class [:flex :flex-row :items-center :space-x-2]}
+   :block/currentc  {:class [:border-blue-500 :bg-blue-100 :border-l-2 :p-3 :space-y-4]}
+   :block/msgc      {:class [:flex-grow :truncate :text-xs]}
+   :block/nocurrent {:class [:border-transparent :hover:bg-gray-100 :border-l-2 :p-3 :space-y-4]}
+   :block/personc   {:class [:flex-grow :text-sm]}
+   :block/svg-big   {:class [:w-5 :h-5]}
+   :block/svg-small {:class [:flex-none :w-3 :h-3]}
+   :block/timec     {:class [:text-xs :text-gray-600]}
+   :block/top       {:class [:block :border-b]}
+   :header/h1       {:class [:text-2xl :font-semibold :flex-grow]}
+   :header/svgc     {:class [:flex-none :w-5 :h-5]}
+   :header/top      {:class [:flex :flex-row :items-center :space-x-2 :p-3]}
+   :menu/container  {:class [:flex :flex-row :justify-between :items-center :space-x-2]}
+   :menu/top        {:class [:flex :flex-row :justify-between :items-center :h-8 :p-3 :text-xs]}
+   :you/blocks      {:class [:flex-auto :overflow-y-auto]}
+   :you/top         {:class [:flex :flex-col "w-1/5"]}})
 
 (def inbox-css
-  {:inbox/top             {:class (str flex-col "w-64 flex-none bg-gray-100 p-4 space-y-6")}
-   :inbox/header          {:class (str flex-row justify-center "mb-6")}
-   :inbox/h1c             {:class large-sb}
-   :inbox/svgc            {:class "flex-none w-4 h-4"}
-
-   :block/top             {:class (str " space-y-3 ")}
-   :block/buttonc         {:class (str  justify-center "inline-flex focus:outline-none ")}
-   :block/svgc            {:class "flex-none w-3 h-3 ml-2"}
-   :block/container       {:class (str "space-y-3 pb-4")}
-   :block/containerhidden {:class (str "space-y-3 pb-4 hidden")}
-
-   :action/top            {:class (str flex-row center-x-spacing "ml-1")}
-   :action/svgc           {:class "w-5 h-5"}
-   :action/namec          {:class (str small-sb "flex-grow text-gray-600")}
-
-   :view/top              {:class (str flex-row center-x-spacing " ml-1 text-xs")}
-   :view/svgc             {:class "w-5 h-5"}
-   :view/namec            {:class "flex-grow "}
-   :view/countc           {:class "text-gray-600 "}
-
-   :expand/top            {:class (str flex-row center-x-spacing small-sb "ml-1 text-gray-600")}
-   :expand/msgc           {:class "flex-grow "}
-   :expand/buttonc        {:class (str small-sb "text-gray-600")}})
+  {:expand/top            {:class [:flex :flex-row :items-center :space-x-2 :text-xs :font-semibold :ml-1 :text-gray-600]}
+   :action/namec          {:class [:text-xs :font-semibold :flex-grow :text-gray-600]}
+   :block/svgc            {:class [:flex-none :w-3 :h-3 :ml-2]}
+   :block/buttonc         {:class [:justify-between :items-center :inline-flex :focus:outline-none]}
+   :view/countc           {:class [:text-gray-600]}
+   :view/namec            {:class [:flex-grow]}
+   :inbox/header          {:class [:flex :flex-row :justify-between :items-center :mb-6]}
+   :action/svgc           {:class [:w-5 :h-5]}
+   :action/top            {:class [:flex :flex-row :items-center :space-x-2 :ml-1]}
+   :block/containerhidden {:class [:space-y-3 :pb-4 :hidden]}
+   :expand/msgc           {:class [:flex-grow]}
+   :inbox/h1c             {:class [:text-2xl :font-semibold]}
+   :block/top             {:class [:space-y-3]}
+   :block/container       {:class [:space-y-3 :pb-4]}
+   :expand/buttonc        {:class [:text-xs :font-semibold :text-gray-600]}
+   :inbox/top             {:class [:flex :flex-col :w-64 :flex-none :bg-gray-100 :p-4 :space-y-6]}
+   :inbox/svgc            {:class [:flex-none :w-4 :h-4]}
+   :view/svgc             {:class [:w-5 :h-5]}
+   :view/top              {:class [:flex :flex-row :items-center :space-x-2 :ml-1 :text-xs]}})
 
 (defn sidebar-item [{:keys [count icon active?]}]
   (let [{:item/keys [top topactive iconc nonicon countc]} sidebar-css
@@ -309,7 +306,8 @@
               :on-change identity})]]]))
 
 (defn card []
-  [:div {:class (str flex-row justify-center "flex-none h-64 bg-white border rounded p-4")} "card content"])
+  (let [{:card/keys [top ]} conversation-css]
+   [:div top "card content"]))
 
 (defn conversation-settings []
   (let [{:settings/keys [top part1 container]} conversation-css]
@@ -348,4 +346,3 @@
 
 (defn main []
   [main-component (ig/init pageconfig)])
-
