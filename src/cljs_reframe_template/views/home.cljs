@@ -86,7 +86,7 @@
    :part/topreverse    {:class [:flex :flex-row :space-x-2 :flex-row-reverse :space-x-reverse]}
    
    :settings/container {:class [:flex :flex-col :space-y-4 :p-4]}
-   :settings/part1     {:class [:flex :flex-col :h-64 :flex-none :border-b :border-gray-400]}
+   :settings/part1     {:class [:flex :flex-col  :flex-none :border-b :border-gray-400 :p-4]}
    :settings/top       {:class [:flex :flex-col "w-1/5" :bg-gray-200 :overflow-y-auto]}})
 
 (def sidebar-css
@@ -211,7 +211,7 @@
 
 (defn stream-block [{:keys [person time msg current]}]
   (let [{:block/keys [top currentc nocurrent container svg-big svg-small personc timec msgc]} stream-css 
-        blockcss (if current currentc nocurrent  )]
+        blockcss (if current currentc nocurrent)]
    [:a.conversation-block top
     [:div blockcss
      [:div container
@@ -309,10 +309,27 @@
   (let [{:card/keys [top ]} conversation-css]
    [:div top "card content"]))
 
-(defn conversation-settings []
+(defn conv-details-item [[k v]]
+  [:div
+   {:class [:flex :space-x-2 :text-sm]}
+   [:p k] [:p v]])
+
+(defn conv-details [details-items]
+  [:div
+   [:div {:class [:flex :flex-row :justify-between :items-center]} 
+    [:h3 {:class [:font-semibold]}
+     "Conversation details"]
+    [svg {:class [:h-4 :w-4]} 
+     v/cog]]
+    
+   
+   (u/spread-by-order conv-details-item details-items)])
+
+(defn conversation-settings [ {:keys [details-items]}]
   (let [{:settings/keys [top part1 container]} conversation-css]
    [:div#conversation-settings top
-    [:div part1]
+    [:div part1
+     [conv-details details-items]]
     [:div container
      [card]
      [card]
@@ -327,7 +344,7 @@
                            :render you-stream}
    ::conversation         {:defaults  db/data
                            :render conversation}
-   ::conversation-details {;;:defaults   db/data
+   ::conversation-details {:defaults   db/data
                            :render conversation-settings}})
 (def main-css
   {:main/top {:class (str flex-row "h-screen bg-gray-100")}
