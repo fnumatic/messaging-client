@@ -62,29 +62,30 @@
 
 (def conversation-css
   {:action/iconc       {:class [:w-4 :h-4]}
-   
-   :card/top           {:class [:flex :flex-row :justify-between :items-center :flex-none :h-64 :bg-white :border :rounded :p-4]}
-   
+
+   :card/top           {:class [:flex :flex-col :h-64 :bg-white :border :border-gray-200 :rounded :p-4]}
+   :card/container     {:class [:flex :flex-row :items-center :space-x-2]}
+
    :conv/convinput     {:class [:flex-none :h-40 :p-4 :pt-0]}
    :conv/main          {:class [:flex-auto :overflow-y-auto :p-5 :space-y-4]
                         :style {:background-image "url(https://static.intercomassets.com/ember/assets/images/messenger-backgrounds/background-1-99a36524645be823aabcd0e673cb47f8.png)"}}
    :conv/textarea      {:class [:w-full :h-full :outline-none :border :focus:border-blue-600 :hover:border-blue-600 :rounded :p-4 :shadow-lg]}
    :conv/top           {:class [:flex :flex-col "w-3/5" :border-l :border-r :border-gray-400]}
-   
+
    :header/act-cont    {:class [:flex :flex-row :items-center :space-x-2]}
    :header/input       {:class [:text-sm :outline-none :border-b :border-dashed :text-black :placeholder-gray-600]}
    :header/person-top  {:class [:flex :flex-col :space-y-1]}
    :header/top         {:class [:flex :flex-row :justify-between :items-center :flex-none :h-20 :p-5 :border-b]}
-   
+
    :hint/top           {:class [:flex :flex-row :justify-center :text-sm :text-gray-600]}
-   
+
    :part/cont          {:class [:flex :flex-col]}
    :part/iconc         {:class [:flex-none :w-6 :h-6]}
    :part/msgc          {:class [:bg-gray-200 :rounded :p-5]}
    :part/timec         {:class [:text-sm :text-gray-600]}
    :part/top           {:class [:flex :flex-row :space-x-2]}
    :part/topreverse    {:class [:flex :flex-row :space-x-2 :flex-row-reverse :space-x-reverse]}
-   
+
    :settings/container {:class [:flex :flex-col :space-y-4 :p-4]}
    :settings/part1     {:class [:flex :flex-col  :flex-none :border-b :border-gray-400 :p-4]}
    :settings/top       {:class [:flex :flex-col "w-1/5" :bg-gray-200 :overflow-y-auto]}})
@@ -112,7 +113,7 @@
    :header/h1       {:class [:text-2xl :font-semibold :flex-grow]}
    :header/svgc     {:class [:flex-none :w-5 :h-5]}
    :header/top      {:class [:flex :flex-row :items-center :space-x-2 :p-3]}
-   :menu/container  {:class [:flex :flex-row :justify-between :items-center :space-x-2]}
+   :menu/container  {:class [:flex :flex-row :items-center :space-x-2]}
    :menu/top        {:class [:flex :flex-row :justify-between :items-center :h-8 :p-3 :text-xs]}
    :you/blocks      {:class [:flex-auto :overflow-y-auto]}
    :you/top         {:class [:flex :flex-col "w-1/5"]}})
@@ -306,23 +307,31 @@
               :on-change identity})]]]))
 
 (defn card []
-  (let [{:card/keys [top ]} conversation-css]
-   [:div top "card content"]))
+  (let [{:card/keys [top container]} conversation-css]
+   [:div top 
+    [:div {:class [:cardheader :flex :flex-row :items-center :justify-between :text-sm]}
+     [:div container
+      [svg {} v/user-circle]
+      [:div {:class [:font-semibold]} 
+       "Nikola Tesla"]]
+     [:div container
+      [svg {} v/dots-vertical]]]
+    ]))
 
 (defn conv-details-item [[k v]]
   [:div
    {:class [:flex :space-x-2 :text-sm]}
-   [:p k] [:p v]])
+   [:p k] [:p v]]) 
 
 (defn conv-details [details-items]
-  [:div
-   [:div {:class [:flex :flex-row :justify-between :items-center]} 
+  [:div {:class [:space-y-1]}
+   [:div {:class [:flex :flex-row :justify-between :items-center]}
     [:h3 {:class [:font-semibold]}
      "Conversation details"]
-    [svg {:class [:h-4 :w-4]} 
+    [svg {:class [:h-4 :w-4]}
      v/cog]]
-    
-   
+
+
    (u/spread-by-order conv-details-item details-items)])
 
 (defn conversation-settings [ {:keys [details-items]}]
@@ -331,6 +340,10 @@
     [:div part1
      [conv-details details-items]]
     [:div container
+     [:div {:class [:flex :flex-row :justify-between :items-center]}
+      [:h3 {:class [:font-semibold]}
+       "Related"]
+      [:p "Customize"]]
      [card]
      [card]
      [card]]]))
