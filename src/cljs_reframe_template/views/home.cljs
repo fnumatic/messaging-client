@@ -61,7 +61,7 @@
 (def conversation-css
   {:action/iconc       {:class [:w-4 :h-4]}
 
-   :card/top           {:class (concat vbox [:h-64 :bg-white :border :border-gray-200 :rounded :p-4])}
+   :card/top           {:class (concat vbox [:h-64 :bg-white :border :border-gray-200 :rounded :p-4 :space-y-1])}
    :card/container     {:class (concat hbox-ic [:space-x-2])}
 
    :conv/convinput     {:class [:flex-none :h-40 :p-4 :pt-0]}
@@ -305,16 +305,32 @@
               {:value "Hi"
                :on-change identity})]]]))
 
+(defn card-item [{:keys [icon keyw]}]
+  [:div {:class (concat hbox-ic [:text-sm :space-x-2])}
+      [svg {:class [:h-4]} icon]
+      [:p keyw]])
+
+(def card-items
+  [
+   {:icon v/user :keyw "User"}
+   {:icon v/globe :keyw "Owner"}
+   {:icon v/at-symbol :keyw "Email"}
+   {:icon v/phone :keyw "Phone"}
+   {:icon v/plus :keyw "User id"}
+   ])
+
 (defn card []
   (let [{:card/keys [top container]} conversation-css]
     [:div top
      [:div {:class (concat hbox-spread [:text-sm])}
       [:div container
-       [svg {} v/user-circle]
+       [svg {:class :h-6} v/user-circle]
        [:div {:class  :font-semibold}
         "Nikola Tesla"]]
       [:div container
-       [svg {} v/dots-vertical]]]]))
+       [svg {} v/dots-vertical]]]
+     (u/spread-by-order card-item card-items)
+     ]))
 
 (defn conv-details-item [[k v]]
   [:div
