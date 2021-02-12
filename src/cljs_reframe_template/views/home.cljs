@@ -360,8 +360,8 @@
    ::conversation-details {:defaults   db/data
                            :render conversation-settings}})
 (def main-css
-  {:main/top {:class (str flex-row "h-screen bg-gray-100")}
-   :main/content  {:class (str flex-row "flex-auto bg-white rounded-tl-xl border-l shadow-xl")}})
+  {:main/top {:class [:flex :flex-row :h-screen :bg-gray-100]}
+   :main/content  {:class [:flex :flex-row :flex-auto :bg-white :rounded-tl-xl :border-l :shadow-xl]}})
 
 (defn main-component [{:keys [::sidebar ::inbox ::you-stream ::conversation ::conversation-details]}]
   (let [{:main/keys [top content]} main-css]
