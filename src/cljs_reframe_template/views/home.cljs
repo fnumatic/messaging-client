@@ -51,6 +51,9 @@
 (def conversation-background-img
   "url(https://static.intercomassets.com/ember/assets/images/messenger-backgrounds/background-1-99a36524645be823aabcd0e673cb47f8.png)")
 
+(defn cl [& classes]
+  {:class (apply concat classes)})
+
 (def vbox [:flex :flex-col])
 (def hbox [:flex :flex-row])
 (def hbox-ic [:flex :flex-row :items-center])
@@ -306,9 +309,9 @@
                :on-change identity})]]]))
 
 (defn card-item [{:keys [icon keyw]}]
-  [:div {:class (concat hbox-ic [:text-sm :space-x-2])}
-      [svg {:class [:h-4]} icon]
-      [:p keyw]])
+  [:div  (cl hbox-ic [:text-sm :space-x-2])
+   [svg {:class [:h-4]} icon]
+   [:p keyw]])
 
 (def card-items
   [
@@ -322,7 +325,7 @@
 (defn card []
   (let [{:card/keys [top container]} conversation-css]
     [:div top
-     [:div {:class (concat hbox-spread [:text-sm])}
+     [:div  (cl hbox-spread [:text-sm])
       [:div container
        [svg {:class :h-6} v/user-circle]
        [:div {:class  :font-semibold}
@@ -334,7 +337,7 @@
 
 (defn conv-details-item [[k v]]
   [:div
-   {:class (concat hbox [:space-x-2 :text-sm])}
+   (cl hbox [:space-x-2 :text-sm])
    [:p k] [:p v]])
 
 (defn conv-details [details-items]
@@ -374,8 +377,8 @@
    ::conversation-details {:defaults   db/data
                            :render conversation-settings}})
 (def main-css
-  {:main/top {:class (concat hbox [:h-screen :bg-gray-100])}
-   :main/content  {:class (concat hbox [:flex-auto :bg-white :rounded-tl-xl :border-l :shadow-xl])}})
+  {:main/top  (cl hbox [:h-screen :bg-gray-100])
+   :main/content  (cl hbox [:flex-auto :bg-white :rounded-tl-xl :border-l :shadow-xl])})
 
 (defn main-component [{:keys [::sidebar ::inbox ::you-stream ::conversation ::conversation-details]}]
   (let [{:main/keys [top content]} main-css]
