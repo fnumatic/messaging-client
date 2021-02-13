@@ -93,7 +93,9 @@
    :settings/top       {:class (concat vbox ["w-1/5" :bg-gray-200 :overflow-y-auto])}})
 
 (def sidebar-css
-  {:item/countc    {:class [:absolute :top-0 :right-0 :mr-3 :mt-3 :bg-red-500 :w-4 :h-4 :text-xs :text-white :rounded-full :text-center]}
+  {:item/countc    {:class [:rounded-full :text-center]}
+   :item/small-overlay  [:absolute :top-0 :right-0  :mr-3 :mt-3  :w-4 :h-4 :text-xs]
+   :item/red-white [:bg-red-500 :text-white]
    :item/iconc     {:class [:flex-none :w-7 :h-7]}
    :item/nonicon   {:class [:rounded-full :bg-gray-400 :w-8 :h-8]}
    :item/top       {:class [:block :relative :w-full :p-4 :h-16 :w-16]}
@@ -141,15 +143,22 @@
    :view/svgc             {:class [:w-5 :h-5]}
    :view/top              {:class (concat hbox-ic [:space-x-2 :ml-1 :text-xs])}})
 
+(def component-css
+  {:icon/textc [:rounded-full :text-center]})
+
+(defn text-icon [opts txt  ]
+  (let [{:icon/keys [textc]} component-css ]
+   [:div (cl textc opts) txt]))
+
 (defn sidebar-item [{:keys [count icon active?]}]
-  (let [{:item/keys [top topactive iconc nonicon countc]} sidebar-css
+  (let [{:item/keys [top topactive iconc nonicon small-overlay red-white]} sidebar-css
         top (if active? topactive top)]
     [:a  (merge top  {:href "#"})
      (if icon
        [svg iconc icon]
        [:div nonicon])
      (when count
-       [:div countc count])]))
+       (text-icon (concat small-overlay red-white) count))]))
 
 (defn sidebar [{:keys [sidebar-items1 sidebar-items2]}]
   (let [{:main/keys [top container]} sidebar-css]
