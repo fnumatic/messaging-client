@@ -1,6 +1,7 @@
 {
     "scripts": {
         "tw": "npx tailwind build resources/tw/style.css -o resources/public/app.css --no-autoprefixer",
+        "twp": "NODE_ENV=production npm run tw",
         "watch:css": "onchange 'resources/tw/*css' -- npm run tw"
     },
     "dependencies": {
