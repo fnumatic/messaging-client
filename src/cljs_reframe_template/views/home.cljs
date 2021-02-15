@@ -137,23 +137,22 @@
    :you/top         [vbox  "w-1/5"]})
 
 (def inbox-css
-  {:expand/top            [hbox ic-x2 xs-semibold :ml-1 :text-gray-600]
-   :action/namec          [xs-semibold :flex-grow :text-gray-600]
-   :block/svgc            [icon-sm :ml-2]
-   :block/buttonc         [bspread :inline-flex :focus:outline-none]
-   :view/countc           [:text-gray-600]
-   :view/namec            [:flex-grow]
-   :inbox/header          [hbox bspread  :mb-6]
+  {:action/namec          [xs-semibold :flex-grow :text-gray-600]
    :action/svgc           size-5
    :action/top            [hbox ic-x2 :ml-1]
-   :block/containerhidden [:space-y-3 :pb-4 :hidden]
-   :expand/msgc           [:flex-grow]
-   :inbox/h1c             [_2xl-semibold]
    :block/top             [:space-y-3]
+   :block/svgc            [icon-sm :ml-2]
+   :block/buttonc         [bspread :inline-flex :focus:outline-none]
    :block/container       [:space-y-3 :pb-4]
+   :expand/top            [hbox ic-x2 xs-semibold :ml-1 :text-gray-600]
+   :expand/msgc           [:flex-grow]
    :expand/buttonc        [xs-semibold :text-gray-600]
+   :inbox/header          [hbox bspread  :mb-6]
+   :inbox/h1c             [_2xl-semibold]
    :inbox/top             [vbox :w-64 :flex-none :bg-gray-100 :p-4 :space-y-6]
    :inbox/svgc            icon-sm
+   :view/countc           [:text-gray-600]
+   :view/namec            [:flex-grow]
    :view/svgc             size-5
    :view/top              [hbox ic-x2 :ml-1 :text-xs]})
 
@@ -204,11 +203,11 @@
      [:div (tw namec) name]]))
 
 (defn inbox-block [{:keys [title open?]} fragm]
-  (r/with-let [{:block/keys [top buttonc svgc container containerhidden]} inbox-css
+  (r/with-let [{:block/keys [top buttonc svgc container ]} inbox-css
                [open*? set-open] (use-state open?)]
 
     (let [icon   (if @open*? v/chevron-down v/chevron-left)
-          container (if  @open*?  container containerhidden)]
+          container (if  @open*?  container [container :hidden])]
       [:div (tw top)
        [:button (merge (tw buttonc)
                        {:on-click #(set-open (not @open*?))})
@@ -332,7 +331,7 @@
                :on-change identity})]]]))
 
 (defn card-item [{:keys [icon keyw]}]
-  [:div  (tw hbox [:items-center :text-sm :space-x-2])
+  [:div  (tw hbox [ic-x2 :text-sm])
    [svg  (tw [:h-4]) icon]
    [:p keyw]])
 
