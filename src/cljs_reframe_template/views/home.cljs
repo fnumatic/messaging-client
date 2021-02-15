@@ -56,10 +56,7 @@
 
 (def vbox [:flex :flex-col])
 (def hbox [:flex :flex-row])
-(def hbox-ic [hbox :items-center])
-(def bspread [:justify-between :items-center] )
-(def hbox-spread [hbox bspread])
-(def vbox-spread [vbox bspread])
+(def bspread [:justify-between :items-center])
 (def size-3 [:w-3 :h-3])
 (def size-4 [:w-4 :h-4])
 (def size-5 [:w-5 :h-5])
@@ -70,89 +67,95 @@
 (def xs-semibold [:text-xs :font-semibold])
 (def _2xl-semibold [:text-2xl :font-semibold])
 (def blue-white [:bg-blue-500 :text-white])
+(def red-white [:bg-red-500 :text-white])
+(def icon-sm [:flex-none size-3])
+(def icon-lg [:flex-none size-6])
+(def icon-xl [:flex-none size-8])
+(def ic-x2 [:items-center :space-x-2])
+
 
 
 (def conversation-css
   {:action/iconc       size-4
 
-   :card/top           [vbox [:h-64 :bg-white :border :border-gray-200 :rounded :p-4 :space-y-1]]
-   :card/container     [hbox-ic [:space-x-2]]
+   :card/top           [vbox :h-64 :bg-white :border :border-gray-200 :rounded :p-4 :space-y-1]
+   :card/container     [hbox ic-x2]
 
    :conv/convinput     [:flex-none :h-40 :p-4 :pt-0]
    :conv/main          [:flex-auto :overflow-y-auto :p-5 :space-y-4]
    :conv/style         {:style {:background-image "url(https://static.intercomassets.com/ember/assets/images/messenger-backgrounds/background-1-99a36524645be823aabcd0e673cb47f8.png)"}}
    :conv/textarea      [:w-full :h-full :outline-none :border :focus:border-blue-600 :hover:border-blue-600 :rounded :p-4 :shadow-lg]
-   :conv/top           [vbox ["w-3/5" :border-l :border-r :border-gray-400]]
+   :conv/top           [vbox "w-3/5" :border-l :border-r :border-gray-400]
 
-   :header/act-cont    [hbox-ic [:space-x-2]]
+   :header/act-cont    [hbox ic-x2]
    :header/input       [:text-sm :outline-none :border-b :border-dashed :text-black :placeholder-gray-600]
-   :header/person-top  [vbox [:space-y-1]]
-   :header/top         [hbox-spread [:flex-none :h-20 :p-5 :border-b]]
+   :header/person-top  [vbox :space-y-1]
+   :header/top         [hbox bspread :flex-none :h-20 :p-5 :border-b]
 
-   :hint/top           [hbox [:justify-center :text-sm :text-gray-600]]
+   :hint/top           [hbox :justify-center :text-sm :text-gray-600]
 
    :part/cont          vbox
-   :part/iconc         [:flex-none size-6]
+   :part/iconc         icon-lg
    :part/msgc          [:bg-gray-200 :rounded :p-5]
    :part/timec         [:text-sm :text-gray-600]
-   :part/top           [hbox [:space-x-2]]
-   :part/topreverse    [hbox [:space-x-2 :flex-row-reverse :space-x-reverse]]
+   :part/top           [hbox :space-x-2]
+   :part/topreverse    [hbox :space-x-2 :flex-row-reverse :space-x-reverse]
 
-   :settings/container [vbox [:space-y-4 :p-4]]
-   :settings/cards-header hbox-spread
-   :settings/part1     [vbox [:flex-none :border-b :border-gray-400 :p-4]]
-   :settings/top       [vbox ["w-1/5" :bg-gray-200 :overflow-y-auto]]})
+   :settings/container [vbox :space-y-4 :p-4]
+   :settings/cards-header [hbox bspread]
+   :settings/part1     [vbox :flex-none :border-b :border-gray-400 :p-4]
+   :settings/top       [vbox "w-1/5" :bg-gray-200 :overflow-y-auto]})
 
 (def sidebar-css
   {:item/countc    [:rounded-full :text-center]
    :item/small-overlay  [size-4 :absolute :top-0 :right-0  :mr-3 :mt-3  :text-xs]
-   :item/red-white [:bg-red-500 :text-white]
-   :item/iconc     [:flex-none size-7]
+   :item/red-white red-white
+   :item/iconc     icon-xl
    :item/nonicon   [:rounded-full :bg-gray-400 size-8]
    :item/top       [:block :relative :w-full :p-4 size-16]
    :item/topactive [:block :relative :w-full :p-4 size-16 :bg-gray-100]
 
-   :main/container [vbox [:w-full :pt-5]]
-   :main/top       [vbox-spread [:flex-none :w-16 :bg-gray-200]]})
+   :main/container [vbox :w-full :pt-5]
+   :main/top       [vbox bspread :flex-none :w-16 :bg-gray-200]})
 
 (def stream-css
-  {:block/container [hbox-ic [:space-x-2]]
+  {:block/container [hbox ic-x2]
    :block/currentc  [:border-blue-500 :bg-blue-100 :border-l-2 :p-3 :space-y-4]
    :block/msgc      [:flex-grow :truncate :text-xs]
    :block/nocurrent [:border-transparent :hover:bg-gray-100 :border-l-2 :p-3 :space-y-4]
    :block/personc   [:flex-grow :text-sm]
    :block/svg-big   size-5
-   :block/svg-small [:flex-none size-3]
+   :block/svg-small icon-sm
    :block/timec     [:text-xs :text-gray-600]
    :block/top       [:block :border-b]
    :header/h1       [_2xl-semibold :flex-grow]
-   :header/svgc     [:flex-none size-5]
-   :header/top      [hbox-ic [:space-x-2 :p-3]]
-   :menu/container  [hbox [:space-x-2]]
-   :menu/top        [hbox-spread [:h-8 :p-3 :text-xs]]
+   :header/svgc     icon-lg
+   :header/top      [hbox ic-x2 :p-3]
+   :menu/container  [hbox ic-x2]
+   :menu/top        [hbox bspread  :h-8 :p-3 :text-xs]
    :you/blocks      [:flex-auto :overflow-y-auto]
-   :you/top         [vbox ["w-1/5"]]})
+   :you/top         [vbox  "w-1/5"]})
 
 (def inbox-css
-  {:expand/top            [hbox-ic [:space-x-2 xs-semibold :ml-1 :text-gray-600]]
+  {:expand/top            [hbox ic-x2 xs-semibold :ml-1 :text-gray-600]
    :action/namec          [xs-semibold :flex-grow :text-gray-600]
-   :block/svgc            [:flex-none size-3 :ml-2]
+   :block/svgc            [icon-sm :ml-2]
    :block/buttonc         [bspread :inline-flex :focus:outline-none]
    :view/countc           [:text-gray-600]
    :view/namec            [:flex-grow]
-   :inbox/header          [hbox-spread [:mb-6]]
+   :inbox/header          [hbox bspread  :mb-6]
    :action/svgc           size-5
-   :action/top            [hbox-ic [:space-x-2 :ml-1]]
+   :action/top            [hbox ic-x2 :ml-1]
    :block/containerhidden [:space-y-3 :pb-4 :hidden]
    :expand/msgc           [:flex-grow]
    :inbox/h1c             [_2xl-semibold]
    :block/top             [:space-y-3]
    :block/container       [:space-y-3 :pb-4]
    :expand/buttonc        [xs-semibold :text-gray-600]
-   :inbox/top             [vbox [:w-64 :flex-none :bg-gray-100 :p-4 :space-y-6]]
-   :inbox/svgc            [:flex-none :w-4 :h-4]
+   :inbox/top             [vbox :w-64 :flex-none :bg-gray-100 :p-4 :space-y-6]
+   :inbox/svgc            icon-sm
    :view/svgc             size-5
-   :view/top              [hbox-ic [:space-x-2 :ml-1 :text-xs]]})
+   :view/top              [hbox ic-x2 :ml-1 :text-xs]})
 
 (def component-css
   {:icon/textc [vbox :justify-center :rounded-full :text-center :flex-none]})
@@ -329,7 +332,7 @@
                :on-change identity})]]]))
 
 (defn card-item [{:keys [icon keyw]}]
-  [:div  (tw hbox-ic [:text-sm :space-x-2])
+  [:div  (tw hbox [:items-center :text-sm :space-x-2])
    [svg  (tw [:h-4]) icon]
    [:p keyw]])
 
@@ -345,9 +348,9 @@
 (defn card []
   (let [{:card/keys [top container]} conversation-css]
     [:div (tw top)
-     [:div  (tw hbox-spread [:text-sm])
+     [:div  (tw hbox bspread [:text-sm])
       [:div (tw container)
-       [text-icon [ :h-7 :w-7 :font-semibold blue-white ] "NT"]
+       [text-icon [ size-7 :font-semibold blue-white ] "NT"]
        [:div  (tw [:font-semibold])
         "Nikola Tesla"]]
       [:div (tw container)
@@ -362,7 +365,7 @@
 
 (defn conv-details [details-items]
   [:div (tw [:space-y-1])
-   [:div (tw hbox-spread)
+   [:div (tw hbox bspread)
     [:h3 (tw [:font-semibold])
      "Conversation details"]
     [svg (tw [:h-4 :w-4])
@@ -377,7 +380,7 @@
      [:div (tw part1)
       [conv-details details-items]]
      [:div (tw container)
-      [:div (tw hbox-spread)
+      [:div (tw hbox bspread)
        [:h3 (tw [:font-semibold])
         "Related"]
        [:p "Customize"]]
