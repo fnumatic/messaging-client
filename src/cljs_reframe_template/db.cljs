@@ -13,6 +13,7 @@
 
 (def conversation-block-data
   {:person nt
+   :person-short "NT"
    :time   "5hr"
    :msg    "some message content whedkjwhed wkjehdkjweh dkjhwekjdhwekjhd "})
 

@@ -144,10 +144,10 @@
    :view/top              {:class (concat hbox-ic [:space-x-2 :ml-1 :text-xs])}})
 
 (def component-css
-  {:icon/textc [:rounded-full :text-center]})
+  {:icon/textc [:flex :flex-col :justify-center :rounded-full :text-center :flex-none]})
 
-(defn text-icon [opts txt  ]
-  (let [{:icon/keys [textc]} component-css ]
+(defn text-icon [opts txt]
+  (let [{:icon/keys [textc]} component-css]
    [:div (cl textc opts) txt]))
 
 (defn sidebar-item [{:keys [count icon active?]}]
@@ -221,14 +221,13 @@
        [inbox-view-expand {:msg "See 42 more" :action "Edit"}]]]
      [inbox-block {:title "Your preferences"}]]))
 
-(defn stream-block [{:keys [person time msg current]}]
+(defn stream-block [{:keys [person person-short  time msg current]}]
   (let [{:block/keys [top currentc nocurrent container svg-big svg-small personc timec msgc]} stream-css
         blockcss (if current currentc nocurrent)]
     [:a.conversation-block top
      [:div blockcss
       [:div container
-       [svg svg-big v/user-circle]
-
+       [text-icon [:w-7 :h-7 :bg-blue-500 :text-white :font-semibold :text-sm] person-short]
        [:strong personc person]
        [:div timec time]]
       [:div container
@@ -328,21 +327,21 @@
    {:icon v/globe :keyw "Owner"}
    {:icon v/at-symbol :keyw "Email"}
    {:icon v/phone :keyw "Phone"}
-   {:icon v/plus :keyw "User id"}
-   ])
+   {:icon v/plus :keyw "User id"}])
+   
 
 (defn card []
   (let [{:card/keys [top container]} conversation-css]
     [:div top
      [:div  (cl hbox-spread [:text-sm])
       [:div container
-       [svg {:class :h-6} v/user-circle]
-       [:div {:class  :font-semibold}
+       [text-icon [ :h-7 :w-7 :font-semibold :bg-blue-500 :text-white ] "NT"]
+       [:div  (cl [:font-semibold])
         "Nikola Tesla"]]
       [:div container
        [svg {} v/dots-vertical]]]
-     (u/spread-by-order card-item card-items)
-     ]))
+     (u/spread-by-order card-item card-items)]))
+     
 
 (defn conv-details-item [[k v]]
   [:div
