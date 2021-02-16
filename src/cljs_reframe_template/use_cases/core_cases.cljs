@@ -12,6 +12,7 @@
 (rf/reg-sub ::re-pressed-example  (gdb [:re-pressed-example]))
 (rf/reg-sub :stream/get-active (gdb [:active-stream]))
 (rf/reg-sub :stream/items (gdb [:stream]))
+(rf/reg-sub :inbox/items (gdb [:inbox-items]))
 
 
 (rf/reg-event-db ::initialize-db (constantly db/default-db))
