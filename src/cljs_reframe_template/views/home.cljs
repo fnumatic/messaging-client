@@ -54,6 +54,12 @@
 (defn tw [& classes]
   {:class (flatten (apply concat classes))})
 
+(defn twon [flag coll]
+  (tw 
+   (if flag 
+     coll 
+     (first coll))))
+
 (defn twl [tw-map]
   (reduce-kv
    #(assoc %1 %2 (tw %3))
@@ -121,16 +127,15 @@
    :item/iconc     icon-xl
    :item/nonicon   [:rounded-full :bg-gray-400 size-8]
    :item/top       [:block :relative :w-full :p-4 size-16]
-   :item/topactive [:block :relative :w-full :p-4 size-16 :bg-gray-100]
-
    :main/container [vbox :w-full :pt-5]
    :main/top       [vbox bspread :flex-none :w-16 :bg-gray-200]})
 
 (def stream-css
   {:block/container [hbox ic-x2]
-   :block/currentc  [:border-blue-500 :bg-blue-100 :border-l-2 :p-3 :space-y-4]
+   :block/block     [:border-l-2 :p-3 :space-y-4]
+   :block/crnt      [:border-blue-500 :bg-blue-100 ]
+   :block/nocrnt    [:border-transparent :hover:bg-gray-100]
    :block/msgc      [:flex-grow :truncate :text-xs]
-   :block/nocurrent [:border-transparent :hover:bg-gray-100 :border-l-2 :p-3 :space-y-4]
    :block/personc   [:flex-grow :truncate :text-sm]
    :block/svg-big   size-5
    :block/svg-small icon-sm
@@ -172,9 +177,10 @@
    [:div (tw textc opts) txt]))
 
 (defn sidebar-item [{:keys [count icon active?]}]
-  (let [{:item/keys [small-overlay red-white]}  sidebar-css
-        {:item/keys [top topactive iconc nonicon]} (twl sidebar-css)
-        top (if active? topactive top)]
+  (let [{:item/keys [small-overlay red-white top iconc]}  sidebar-css
+        {:item/keys [nonicon]} (twl sidebar-css)
+        top (twon active? [top :bg-gray-100])
+        iconc (twon active? [iconc :text-blue-700])]
     [:a  (merge top  {:href "#"})
      (if icon
        [svg iconc icon]
@@ -217,13 +223,13 @@
                [open*? set-open] (use-state open?)]
 
     (let [icon   (if @open*? v/chevron-down v/chevron-left)
-          container (if  @open*?  container [container :hidden])]
+          container (twon (not @open*?) [container :hidden])]
       [:div top
        [:button (merge buttonc
                        {:on-click #(set-open (not @open*?))})
         title
         [svg svgc icon]]
-       [:div (tw container)
+       [:div container
         fragm]])))
 
 
@@ -245,10 +251,12 @@
      [inbox-block {:title "Your preferences"}]]))
 
 (defn stream-block [{:keys [person person-short  time msg current]}]
-  (let [{:block/keys [top currentc nocurrent container svg-small personc timec msgc]} (twl stream-css)
-        blockcss (if current currentc nocurrent)]
+  (let [{:block/keys [crnt nocrnt block ]} stream-css
+        {:block/keys [top container svg-small personc timec msgc]} (twl stream-css)
+        blockcss (if current [block crnt] [block nocrnt])]
+        
     [:a.conversation-block  top
-     [:div blockcss
+     [:div (tw blockcss)
       [:div container
        [text-icon def-texticon person-short]
        [:strong personc person]
