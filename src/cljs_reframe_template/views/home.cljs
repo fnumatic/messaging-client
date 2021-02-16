@@ -54,6 +54,12 @@
 (defn tw [& classes]
   {:class (flatten (apply concat classes))})
 
+(defn twl [tw-map]
+  (reduce-kv
+   #(assoc %1 %2 (tw %3))
+   {}
+   tw-map))
+
 (def vbox [:flex :flex-col])
 (def hbox [:flex :flex-row])
 (def bspread [:justify-between :items-center])
@@ -164,65 +170,67 @@
    [:div (tw textc opts) txt]))
 
 (defn sidebar-item [{:keys [count icon active?]}]
-  (let [{:item/keys [top topactive iconc nonicon small-overlay red-white]} sidebar-css
+  (let [{:item/keys [small-overlay red-white]}  sidebar-css
+        {:item/keys [top topactive iconc nonicon]} (twl sidebar-css)
         top (if active? topactive top)]
-    [:a  (merge (tw top)  {:href "#"})
+    [:a  (merge top  {:href "#"})
      (if icon
-       [svg (tw iconc) icon]
-       [:div (tw nonicon)])
+       [svg iconc icon]
+       [:div nonicon])
      (when count
        (text-icon [small-overlay red-white] count))]))
 
 (defn sidebar [{:keys [sidebar-items1 sidebar-items2]}]
-  (let [{:main/keys [top container]} sidebar-css]
-    [:div#sidebar (tw top)
-     [:div (tw container)
+  (let [{:main/keys [top container]} (twl sidebar-css)]
+    [:div#sidebar top
+     [:div container
       (u/spread-by-order sidebar-item sidebar-items1)]
 
-     [:div (tw container)
+     [:div container
       (u/spread-by-order sidebar-item sidebar-items2)]]))
 
 (defn inbox-view [{:keys [icon name count]}]
-  (let [{:view/keys [top svgc namec countc]} inbox-css]
-    [:div (tw top)
-     [svg (tw svgc) icon]
+  (let [{:view/keys [top svgc namec countc]} (twl inbox-css)]
+    [:div top
+     [svg svgc icon]
 
-     [:div (tw namec) name]
-     [:div (tw countc) count]]))
+     [:div namec name]
+     [:div countc count]]))
 
 (defn inbox-view-expand [{:keys [msg action]}]
-  (let [{:expand/keys [top msgc buttonc]} inbox-css]
-    [:div (tw top)
-     [:div (tw msgc) msg]
-     [:button (tw buttonc)  action]]))
+  (let [{:expand/keys [top msgc buttonc]} (twl inbox-css)]
+    [:div top
+     [:div msgc msg]
+     [:button buttonc  action]]))
 
 (defn inbox-action [{:keys [icon name]}]
-  (let [{:action/keys [top svgc namec]} inbox-css]
-    [:div (tw top)
-     [svg (tw svgc) icon]
-     [:div (tw namec) name]]))
+  (let [{:action/keys [top svgc namec]} (twl inbox-css)]
+    [:div top
+     [svg svgc icon]
+     [:div namec name]]))
 
 (defn inbox-block [{:keys [title open?]} fragm]
-  (r/with-let [{:block/keys [top buttonc svgc container ]} inbox-css
+  (r/with-let [{:block/keys [container ]} inbox-css
+               {:block/keys [top buttonc svgc]} (twl inbox-css)
                [open*? set-open] (use-state open?)]
 
     (let [icon   (if @open*? v/chevron-down v/chevron-left)
           container (if  @open*?  container [container :hidden])]
-      [:div (tw top)
-       [:button (merge (tw buttonc)
+      [:div top
+       [:button (merge buttonc
                        {:on-click #(set-open (not @open*?))})
         title
-        [svg (tw svgc) icon]]
+        [svg svgc icon]]
        [:div (tw container)
         fragm]])))
 
 
 (defn inbox [{:keys [conversation-views]}]
-  (let [{:inbox/keys [top header h1c svgc]} inbox-css]
-    [:div#inbox (tw top)
-     [:div (tw header)
-      [:h1 (tw h1c) "Inbox"]
-      [svg (tw svgc) v/search-icon]]
+  (let [{:inbox/keys [top header h1c svgc]} (twl inbox-css)]
+    [:div#inbox  top
+     [:div header
+      [:h1 h1c "Inbox"]
+      [svg svgc v/search-icon]]
      [inbox-block {:title "Conversations" :open? true}
       [:<>
        (u/spread-by-id inbox-view conversation-views)
@@ -235,41 +243,41 @@
      [inbox-block {:title "Your preferences"}]]))
 
 (defn stream-block [{:keys [person person-short  time msg current]}]
-  (let [{:block/keys [top currentc nocurrent container svg-big svg-small personc timec msgc]} stream-css
+  (let [{:block/keys [top currentc nocurrent container svg-small personc timec msgc]} (twl stream-css)
         blockcss (if current currentc nocurrent)]
-    [:a.conversation-block (tw top)
-     [:div (tw blockcss)
-      [:div (tw container)
+    [:a.conversation-block  top
+     [:div blockcss
+      [:div container
        [text-icon [size-7 blue-white :font-semibold :text-sm] person-short]
-       [:strong (tw personc) person]
-       [:div (tw timec) time]]
-      [:div (tw container)
-       [svg (tw svg-small) v/user-circle]
-       [:div (tw msgc) msg]]]]))
+       [:strong personc person]
+       [:div timec time]]
+      [:div container
+       [svg svg-small v/user-circle]
+       [:div msgc msg]]]]))
 
 (defn stream-header [{:keys [icon name]}]
-  (let [{:header/keys [top svgc h1]} stream-css]
-    [:div (tw top)
-     [svg (tw svgc) icon]
-     [:h1 (tw h1) name]]))
+  (let [{:header/keys [top svgc h1]} (twl stream-css)]
+    [:div top
+     [svg svgc icon]
+     [:h1 h1 name]]))
 
 (defn stream-menu []
-  (let [{:menu/keys [top container]} stream-css]
-    [:div (tw top)
-     [:div (tw container)
+  (let [{:menu/keys [top container]} (twl stream-css)]
+    [:div top
+     [:div container
       [svg {} v/brief-case]
       [:div 5]
       [svg {} v/chevron-down]]
-     [:div (tw container)
+     [:div container
       [:div "newest"]
       [svg {} v/chevron-down]]]))
 
 (defn you-stream [{:keys [cbd-list]}]
-  (let [{:you/keys [top blocks]} stream-css]
-    [:div#you-stream (tw top)
+  (let [{:you/keys [top blocks]} (twl stream-css)]
+    [:div#you-stream top
      [stream-header {:icon v/menu-alt-1 :name "You"}]
      [stream-menu]
-     [:div (tw blocks)
+     [:div blocks
       (u/spread-by-id stream-block cbd-list)]]))
 
 
@@ -278,32 +286,32 @@
     [svg (tw iconc) icon]))
 
 (defn conversation-header [{:keys [person title actions]}]
-  (let [{:header/keys [top person-top input act-cont]} conversation-css
+  (let [{:header/keys [top person-top input act-cont]} (twl conversation-css)
         title  (or title "")]
-    [:div (tw top)
-     [:div (tw person-top)
+    [:div top
+     [:div person-top
       [:strong person]
-      [:input (merge (tw input)
-                     {:type "text"
+      [:input (merge input
+                     {:type        "text"
                       :placeholder "Add coversation title"
-                      :value title
-                      :on-change identity})]]
-     [:div (tw act-cont)
+                      :value       title
+                      :on-change   identity})]]
+     [:div act-cont
       (u/spread-by-order conversation-header-action actions)]]))
 
 
 (defn conversation-hint [{:keys [msg]}]
-  (let [{:hint/keys [top]} conversation-css]
-    [:div (tw top)  msg]))
+  (let [{:hint/keys [top]} (twl conversation-css)]
+    [:div top  msg]))
 
 (defn conversation-part [{:keys [icon msg time me]}]
-  (let [{:part/keys [top topreverse iconc cont msgc timec]} conversation-css
+  (let [{:part/keys [top topreverse iconc cont msgc timec]} (twl conversation-css)
         top (if me  topreverse top)]
-    [:div (tw top)
-     [svg (tw iconc) icon]
-     [:div (tw cont)
-      [:div (tw msgc) msg]
-      [:div (tw timec) time]]]))
+    [:div top
+     [svg iconc icon]
+     [:div cont
+      [:div msgc msg]
+      [:div timec time]]]))
 
 (defn conversation-item [data]
   (condp = (:type data)
@@ -318,20 +326,21 @@
    {:icon v/check}])
 
 (defn conversation [{:keys [conversations]}]
-  (let [{:conv/keys [top main style convinput textarea]} conversation-css]
-    [:div#conversation (tw top)
+  (let [{:conv/keys [style]} conversation-css
+        {:conv/keys [top main convinput textarea]} (twl conversation-css)]
+    [:div#conversation top
      [conversation-header {:person db/nt :actions conversation-header-actions}]
-     [:div (merge (tw main)
+     [:div (merge main
                   style)
       (u/spread-by-order conversation-item conversations)]
-     [:div (tw convinput)
+     [:div convinput
       [:textarea
-       (merge (tw textarea)
-              {:value "Hi"
+       (merge textarea
+              {:value     "Hi"
                :on-change identity})]]]))
 
 (defn card-item [{:keys [icon keyw]}]
-  [:div  (tw hbox [ic-x2 :text-sm])
+  [:div  (tw hbox ic-x2 [:text-sm])
    [svg  (tw [:h-4]) icon]
    [:p keyw]])
 
@@ -345,14 +354,14 @@
    
 
 (defn card []
-  (let [{:card/keys [top container]} conversation-css]
-    [:div (tw top)
+  (let [{:card/keys [top container]} (twl conversation-css)]
+    [:div top
      [:div  (tw hbox bspread [:text-sm])
-      [:div (tw container)
-       [text-icon [ size-7 :font-semibold blue-white ] "NT"]
+      [:div container
+       [text-icon [size-7 :font-semibold blue-white] "NT"]
        [:div  (tw [:font-semibold])
         "Nikola Tesla"]]
-      [:div (tw container)
+      [:div container
        [svg {} v/dots-vertical]]]
      (u/spread-by-order card-item card-items)]))
      
@@ -374,11 +383,11 @@
    (u/spread-by-order conv-details-item details-items)])
 
 (defn conversation-settings [{:keys [details-items]}]
-  (let [{:settings/keys [top part1 container]} conversation-css]
-    [:div (tw top)
-     [:div (tw part1)
+  (let [{:settings/keys [top part1 container]} (twl conversation-css)]
+    [:div top
+     [:div part1
       [conv-details details-items]]
-     [:div (tw container)
+     [:div container
       [:div (tw hbox bspread)
        [:h3 (tw [:font-semibold])
         "Related"]
@@ -403,11 +412,11 @@
    :main/content  [hbox [:flex-auto :bg-white :rounded-tl-xl :border-l :shadow-xl]]})
 
 (defn main-component [{:keys [::sidebar ::inbox ::you-stream ::conversation ::conversation-details]}]
-  (let [{:main/keys [top content]} main-css]
-    [:div (tw top)
+  (let [{:main/keys [top content]} (twl main-css)]
+    [:div top
      [sidebar]
      [inbox]
-     [:div (tw content)
+     [:div content
       [you-stream]
       [conversation]
       [conversation-details]]]))
