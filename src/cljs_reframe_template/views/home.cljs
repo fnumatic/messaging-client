@@ -131,7 +131,7 @@
    :block/currentc  [:border-blue-500 :bg-blue-100 :border-l-2 :p-3 :space-y-4]
    :block/msgc      [:flex-grow :truncate :text-xs]
    :block/nocurrent [:border-transparent :hover:bg-gray-100 :border-l-2 :p-3 :space-y-4]
-   :block/personc   [:flex-grow :text-sm]
+   :block/personc   [:flex-grow :truncate :text-sm]
    :block/svg-big   size-5
    :block/svg-small icon-sm
    :block/timec     [:text-xs :text-gray-600]

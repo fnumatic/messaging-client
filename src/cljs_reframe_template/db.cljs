@@ -11,17 +11,24 @@
 (def nt  "Nikola Tesla")
 
 
-(def conversation-block-data
-  {:person nt
-   :person-short "NT"
-   :time   "5hr"
-   :msg    "some message content whedkjwhed wkjehdkjweh dkjhwekjdhwekjhd "})
+(def conversation-stream
+  [
+   [nt "NT" "5hr" true]
+   ["Fu Lan" "FL" "2mth" ]
+   ["natalia.alvarez@localhost" "N" "2mth"]
+   ["aha" "A" "2mth"]
+   ["Nikola and 30 others" "NT" "2mth"]
+   ])
+
+(defn conv-block-data [[pers short time current]]
+  (cond-> {:person       pers
+           :person-short short
+           :time         time
+           :msg          "some message content whedkjwhed wkjehdkjweh dkjhwekjdhwekjhd "}
+       current      (assoc :current true)))
 
 (def cbd-list
-  (concat
-   (repeat 2 conversation-block-data)
-   [(merge conversation-block-data {:current true})]
-   (repeat 3 conversation-block-data)))
+  (map conv-block-data conversation-stream ))
 
 (def conversations
   [{:icon v/user-circle :msg "Some message text" :time "4hr ago"}
