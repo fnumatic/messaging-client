@@ -71,6 +71,7 @@
 (def size-8 [:w-8 :h-8])
 (def size-16 [:w-16 :h-16])
 (def xs-semibold [:text-xs :font-semibold])
+(def sm-semibold [:text-sm :font-semibold])
 (def _2xl-semibold [:text-2xl :font-semibold])
 (def blue-white [:bg-blue-500 :text-white])
 (def red-white [:bg-red-500 :text-white])
@@ -78,6 +79,7 @@
 (def icon-lg [:flex-none size-6])
 (def icon-xl [:flex-none size-8])
 (def ic-x2 [:items-center :space-x-2])
+(def def-texticon [size-7 blue-white sm-semibold])
 
 
 
@@ -178,7 +180,7 @@
        [svg iconc icon]
        [:div nonicon])
      (when count
-       (text-icon [small-overlay red-white] count))]))
+       [text-icon [small-overlay red-white] count])]))
 
 (defn sidebar [{:keys [sidebar-items1 sidebar-items2]}]
   (let [{:main/keys [top container]} (twl sidebar-css)]
@@ -248,7 +250,7 @@
     [:a.conversation-block  top
      [:div blockcss
       [:div container
-       [text-icon [size-7 blue-white :font-semibold :text-sm] person-short]
+       [text-icon def-texticon person-short]
        [:strong personc person]
        [:div timec time]]
       [:div container
@@ -308,7 +310,9 @@
   (let [{:part/keys [top topreverse iconc cont msgc timec]} (twl conversation-css)
         top (if me  topreverse top)]
     [:div top
-     [svg iconc icon]
+     (if me
+       [svg iconc icon]
+       [text-icon def-texticon "NT"])
      [:div cont
       [:div msgc msg]
       [:div timec time]]]))
@@ -358,7 +362,7 @@
     [:div top
      [:div  (tw hbox bspread [:text-sm])
       [:div container
-       [text-icon [size-7 :font-semibold blue-white] "NT"]
+       [text-icon def-texticon "NT"]
        [:div  (tw [:font-semibold])
         "Nikola Tesla"]]
       [:div container
