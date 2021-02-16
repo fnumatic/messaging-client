@@ -185,26 +185,29 @@
   (let [{:icon/keys [textc]} component-css]
    [:div (tw textc opts) txt]))
 
-(defn sidebar-item [{:keys [count icon active?]}]
+(defn sidebar-item [{:keys [id count icon activate-view active1]}]
   (let [{:item/keys [small-overlay red-white top iconc]}  sidebar-css
         {:item/keys [nonicon]} (twl sidebar-css)
+        active? (= id active1 )
         top (twon active? [top :bg-gray-100])
         iconc (twon active? [iconc :text-blue-700])]
-    [:a  (merge top  {:href "#"})
+    [:a  (merge top  
+                {:href "#"}
+                (when activate-view {:on-click #(activate-view id)}))
      (if icon
        [svg iconc icon]
        [:div nonicon])
      (when count
        [text-icon [small-overlay red-white] count])]))
 
-(defn sidebar [{:keys [sidebar-items1 sidebar-items2]}]
+(defn sidebar [{:keys [sidebar1 sidebar2] :as opts}]
   (let [{:main/keys [top container]} (twl sidebar-css)]
     [:div#sidebar top
      [:div container
-      (u/spread-by-order sidebar-item sidebar-items1)]
+      (u/spread-by-id sidebar-item sidebar1 opts)]
 
      [:div container
-      (u/spread-by-order sidebar-item sidebar-items2)]]))
+      (u/spread-by-id sidebar-item sidebar2)]]))
 
 (defn inbox-view [{:keys [icon name count]}]
   (let [{:view/keys [top svgc namec countc]} (twl inbox-css)]
@@ -421,10 +424,10 @@
       [card]]]))
 
 (def pageconfig
-  {::sidebar              {:defaults db/data
+  {::sidebar              {:defaults {:activate-view #(rf/dispatch [:sidebar/set-active  %])}
+                           :state (rf/subscribe [:sidebar]) 
                            :render   sidebar}
-   ::inbox                {:defaults db/data
-                           :state  (ra/reaction 
+   ::inbox                {:state  (ra/reaction 
                                     {:conv-items @(rf/subscribe [:inbox/items])})
                            :render   inbox}
    ::you-stream           {:defaults {:click-stream #(rf/dispatch [:stream/set-active  %])}

@@ -13,12 +13,15 @@
 (rf/reg-sub :stream/get-active (gdb [:active-stream]))
 (rf/reg-sub :stream/items (gdb [:stream]))
 (rf/reg-sub :inbox/items (gdb [:inbox-items]))
+(rf/reg-sub :sidebar (gdb [:sidebar]))
+
 
 
 (rf/reg-event-db ::initialize-db (constantly db/default-db))
 (rf/reg-event-db ::set-active-panel [rf/debug] (sdb [:active-panel]))
 
 (rf/reg-event-db :stream/set-active (sdb [:active-stream]))
+(rf/reg-event-db :sidebar/set-active (sdb [:sidebar :active1]))
 
 
 

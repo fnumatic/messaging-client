@@ -72,8 +72,6 @@
 
 (def data
   {:conversations (indexi-fy conversations)
-   :sidebar-items1 sidebar-items1
-   :sidebar-items2 sidebar-items2
    :details-items details-items
    })
 
@@ -81,4 +79,7 @@
   {:name "re-frame"
    :stream  (indexi-fy cbd-list)
    :active-stream 0
-   :inbox-items (indexi-fy conversation-views)})
+   :inbox-items (indexi-fy conversation-views)
+   :sidebar {:sidebar1 (indexi-fy sidebar-items1)
+             :sidebar2 (indexi-fy sidebar-items2)
+             :active1 1}})
