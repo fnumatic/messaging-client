@@ -51,16 +51,24 @@
 (def conversation-background-img
   "url(https://static.intercomassets.com/ember/assets/images/messenger-backgrounds/background-1-99a36524645be823aabcd0e673cb47f8.png)")
 
-(defn tw [& classes]
+(defn tw 
+  "nested coll of tw classes to :class map
+   [:foo [:bar :buzz]] -> {:class [:foo :bar :buzz]}"
+  [& classes]
   {:class (flatten (apply concat classes))})
 
-(defn twon [flag coll]
+(defn twon
+ "tailwind on flag"
+  [flag coll]
   (tw 
    (if flag 
      coll 
      (first coll))))
 
-(defn twl [tw-map]
+(defn twl 
+  "all colls on mapvalues to :class maps
+   {:foo [:bar]} -> {:foo {:class [:bar]}}"
+  [tw-map]
   (reduce-kv
    #(assoc %1 %2 (tw %3))
    {}
