@@ -1,8 +1,9 @@
 (ns cljs-reframe-template.views.home
   {:clj-kondo/config '{:lint-as {reagent.core/with-let clojure.core/let}}}
   (:require
-   [re-frame.core :as re-frame]
+   [re-frame.core :as rf]
    [reagent.core :as r]
+   [reagent.ratom :as ra]
    [cljs-reframe-template.tools.reagent-hooks :refer [use-state]]
    [cljs-reframe-template.use-cases.core-cases :as ccases]
    [cljs-reframe-template.svg :as v :refer [svg]]
@@ -44,7 +45,7 @@
 
 
 (defn main-panel []
-  (let [active-route (re-frame/subscribe [::ccases/active-panel])]
+  (let [active-route (rf/subscribe [::ccases/active-panel])]
     [show-panel @active-route]))
 
 
@@ -258,12 +259,15 @@
        [inbox-view-expand {:msg "See 42 more" :action "Edit"}]]]
      [inbox-block {:title "Your preferences"}]]))
 
-(defn stream-block [{:keys [person person-short  time msg current]}]
-  (let [{:block/keys [crnt nocrnt block ]} stream-css
+(defn stream-block [{:keys [id person person-short  time msg current click-stream active]}]
+  (let [{:block/keys [crnt nocrnt block]} stream-css
         {:block/keys [top container svg-small personc timec msgc]} (twl stream-css)
-        blockcss (if current [block crnt] [block nocrnt])]
+        blockcss (if (= id active) [block crnt] [block nocrnt])
+        ]
         
-    [:a.conversation-block  top
+    [:a.conversation-block  
+     (merge top
+            {:on-click #(click-stream id)})
      [:div (tw blockcss)
       [:div container
        [text-icon def-texticon person-short]
@@ -290,13 +294,13 @@
       [:div "newest"]
       [svg {} v/chevron-down]]]))
 
-(defn you-stream [{:keys [cbd-list]}]
+(defn you-stream [{:keys [items ] :as opts}]
   (let [{:you/keys [top blocks]} (twl stream-css)]
     [:div#you-stream top
      [stream-header {:icon v/menu-alt-1 :name "You"}]
      [stream-menu]
      [:div blocks
-      (u/spread-by-id stream-block cbd-list)]]))
+      (u/spread-by-id stream-block items opts)]]))
 
 
 (defn conversation-header-action [{:keys [icon]}]
@@ -421,8 +425,11 @@
                            :render   sidebar}
    ::inbox                {:defaults db/data
                            :render   inbox}
-   ::you-stream           {:defaults db/data
-                           :render you-stream}
+   ::you-stream           {:defaults {:click-stream #(rf/dispatch [:stream/set-active  %])}
+                           :state    (ra/reaction {:items  @(rf/subscribe [:stream/items])
+                                                   :active @(rf/subscribe [:stream/get-active])})
+
+                           :render   you-stream}
    ::conversation         {:defaults  db/data
                            :render conversation}
    ::conversation-details {:defaults   db/data

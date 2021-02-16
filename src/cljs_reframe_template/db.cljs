@@ -1,8 +1,7 @@
 (ns cljs-reframe-template.db
   (:require [cljs-reframe-template.svg :as v]))
 
-(def default-db
-  {:name "re-frame"})
+
 
 (defn indexi-fy [coll]
   (map-indexed
@@ -73,9 +72,13 @@
 
 (def data
   {:conversations (indexi-fy conversations)
-   :cbd-list (indexi-fy cbd-list)
    :conversation-views (indexi-fy conversation-views)
    :sidebar-items1 sidebar-items1
    :sidebar-items2 sidebar-items2
    :details-items details-items
    })
+
+(def default-db
+  {:name "re-frame"
+   :stream  (indexi-fy cbd-list)
+   :active-stream 0})
