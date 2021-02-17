@@ -262,7 +262,7 @@
        [inbox-view-expand {:msg "See 42 more" :action "Edit"}]]]
      [inbox-block {:title "Your preferences"}]]))
 
-(defn stream-block [{:keys [id person person-short  time msg current click-stream active]}]
+(defn stream-block [{:keys [id person person-short  time msg click-stream active]}]
   (let [{:block/keys [crnt nocrnt block]} stream-css
         {:block/keys [top container svg-small personc timec msgc]} (twl stream-css)
         blockcss (if (= id active) [block crnt] [block nocrnt])
@@ -431,10 +431,7 @@
                                     {:conv-items @(rf/subscribe [:inbox/items])})
                            :render   inbox}
    ::you-stream           {:defaults {:click-stream #(rf/dispatch [:stream/set-active  %])}
-                           :state    (ra/reaction 
-                                      {:items  @(rf/subscribe [:stream/items])
-                                       :active @(rf/subscribe [:stream/get-active])})
-
+                           :state    (rf/subscribe [:stream/main])
                            :render   you-stream}
    ::conversation         {:defaults  {:update-msg #(rf/dispatch [:conversation/update-msg  %])}
                            :state (rf/subscribe [:conversation/main])
