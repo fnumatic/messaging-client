@@ -104,11 +104,18 @@
    :card/top           [vbox :h-64 :bg-white :border :border-gray-200 :rounded :p-4 :space-y-1]
    :card/container     [hbox ic-x2]
 
-   :conv/convinput     [:flex-none :h-40 :p-4 :pt-0]
    :conv/main          [:flex-auto :overflow-y-auto :p-5 :space-y-4]
    :conv/style         {:style {:background-image "url(https://static.intercomassets.com/ember/assets/images/messenger-backgrounds/background-1-99a36524645be823aabcd0e673cb47f8.png)"}}
-   :conv/textarea      [:w-full :h-full :outline-none :border :focus:border-blue-600 :hover:border-blue-600 :rounded :p-4 :shadow-lg]
    :conv/top           [vbox "w-3/5" :border-l :border-r :border-gray-400]
+   :edit/textarea      [:w-full :h-full :outline-none :hover:border-blue-600  :resize-none]
+   :edit/top           [vbox :flex-none :h-40 :p-4 :pt-2 :border :focus:border-blue-600 :shadow-lg :m-2 :rounded
+                        :space-y-2 :hover:border-blue-600]
+   :edit/header        [hbox  :space-x-6 :font-semibold :text-gray-500]
+   :edit/reply         [:text-blue-700 :border-b-2  :border-blue-700 :pb-1]
+   :edit/menu-icon     [size-5 :text-gray-500]
+   :edit/toolbar       [hbox bspread]
+   :edit/actions       [hbox [:space-x-2]]
+   :edit/button        [blue-white :font-medium :focus:outline-none :border-gray-400 :rounded :px-2 :py-0.5]
 
    :header/act-cont    [hbox ic-x2]
    :header/input       [:text-sm :outline-none :border-b :border-dashed :text-black :placeholder-gray-600]
@@ -352,19 +359,37 @@
    {:icon v/clock}
    {:icon v/check}])
 
-(defn conversation [{:keys [items msg update-msg]}]
+(def edit-menu-icons
+  [v/book-open v/brief-case v/chart-bar v/chip
+   v/clock v/globe v/paper-airplane v/phone v/plus v/star])
+
+(defn conversation-editor [{:keys [msg update-msg send-msg]}]
+  (let [{:edit/keys [top header textarea reply menu-icon toolbar actions button]} (twl conversation-css)
+        icon-cmp  #(-> [svg menu-icon %])]
+     [:div top
+      [:div header
+       [:div reply "Reply"]
+       [:div "Note"]]
+      [:textarea
+       (merge textarea
+              {:value     msg
+               :on-change (comp update-msg u/target-value)})]
+      [:div toolbar
+       [:div actions
+        (u/spread-by-order icon-cmp edit-menu-icons )]
+       [:button (merge button
+                       {:on-click send-msg}) 
+        "Send"] ]]))
+
+(defn conversation [{:keys [items editor] }]
   (let [{:conv/keys [style]} conversation-css
-        {:conv/keys [top main convinput textarea]} (twl conversation-css)]
+        {:conv/keys [top main ]} (twl conversation-css)]
     [:div#conversation top
      [conversation-header {:person db/nt :actions conversation-header-actions}]
      [:div (merge main
                   style)
       (u/spread-by-order conversation-item items)]
-     [:div convinput
-      [:textarea
-       (merge textarea
-              {:value     msg
-               :on-change (comp update-msg u/target-value)})]]]))
+     [editor]]))
 
 (defn card-item [{:keys [icon keyw]}]
   [:div  (tw hbox ic-x2 [:text-sm])
@@ -432,7 +457,11 @@
    ::you-stream           {:defaults {:click-stream #(rf/dispatch [:stream/set-active  %])}
                            :state    (rf/subscribe [:stream/main])
                            :render   you-stream}
-   ::conversation         {:defaults  {:update-msg #(rf/dispatch [:conversation/update-msg  %])}
+   ::conversation-editor  {:defaults {:update-msg #(rf/dispatch [:conversation/update-msg  %])
+                                      :send-msg  #(println "msg send")}
+                           :state    (rf/subscribe [:conversation/main])
+                           :render   conversation-editor}
+   ::conversation         {:defaults {:editor  (ig/ref ::conversation-editor)}
                            :state (rf/subscribe [:conversation/main])
                            :render conversation}
    ::conversation-details {:state (rf/subscribe [:conversation-detail/main])
