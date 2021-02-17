@@ -15,6 +15,7 @@
 (rf/reg-sub :inbox/items (gdb [:inbox-items]))
 (rf/reg-sub :sidebar (gdb [:sidebar]))
 (rf/reg-sub :conversation/main (gdb [:conversation]))
+(rf/reg-sub :conversation-detail/main (gdb [:conversation-detail]))
 
 
 (rf/reg-event-db :conversation/update-msg (sdb [:conversation :msg]))

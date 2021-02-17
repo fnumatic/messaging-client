@@ -70,9 +70,6 @@
    ["Brand" "S&T"]
    ["ID" "333222333"]])
 
-(def data
-  {:details-items details-items
-   })
 
 (def default-db
   {:name "re-frame"
@@ -84,4 +81,5 @@
              :active1 1}
    :conversation {:items (indexi-fy conversations)
                   :msg "Hallo fool"
-                  :note "Note to myself"}})
+                  :note "Note to myself"}
+   :conversation-detail {:items details-items}})

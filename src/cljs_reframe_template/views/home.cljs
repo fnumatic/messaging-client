@@ -409,11 +409,11 @@
 
    (u/spread-by-order conv-details-item details-items)])
 
-(defn conversation-settings [{:keys [details-items]}]
+(defn conversation-settings [{:keys [items]}]
   (let [{:settings/keys [top part1 container]} (twl conversation-css)]
     [:div top
      [:div part1
-      [conv-details details-items]]
+      [conv-details items]]
      [:div container
       [:div (tw hbox bspread)
        [:h3 (tw [:font-semibold])
@@ -439,7 +439,7 @@
    ::conversation         {:defaults  {:update-msg #(rf/dispatch [:conversation/update-msg  %])}
                            :state (rf/subscribe [:conversation/main])
                            :render conversation}
-   ::conversation-details {:defaults   db/data
+   ::conversation-details {:state (rf/subscribe [:conversation-detail/main])
                            :render conversation-settings}})
 (def main-css
   {:main/top  [hbox [:h-screen :bg-gray-100]]
