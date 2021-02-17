@@ -11,3 +11,6 @@
   (let [enrich-item #(if opts (merge % (first opts)) %)]
    (for [[idx item] (map-indexed vector coll)]
     ^{:key idx} [comp (enrich-item item)])))
+
+(defn target-value [evt]
+  (-> evt .-target .-value))
