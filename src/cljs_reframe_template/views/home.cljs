@@ -245,7 +245,7 @@
         fragm]])))
 
 
-(defn inbox [{:keys [conv-items]}]
+(defn inbox [{:keys [items]}]
   (let [{:inbox/keys [top header h1c svgc]} (twl inbox-css)]
     [:div#inbox  top
      [:div header
@@ -253,7 +253,7 @@
       [svg svgc v/search-icon]]
      [inbox-block {:title "Conversations" :open? true}
       [:<>
-       (u/spread-by-id inbox-view conv-items)
+       (u/spread-by-id inbox-view items)
        [inbox-action {:icon v/plus :name "Create View"}]
        [inbox-view-expand {:msg "See 124 more" :action "Edit"}]]]
      [inbox-block {:title "Automation"}
@@ -427,8 +427,7 @@
   {::sidebar              {:defaults {:activate-view #(rf/dispatch [:sidebar/set-active  %])}
                            :state (rf/subscribe [:sidebar]) 
                            :render   sidebar}
-   ::inbox                {:state  (ra/reaction 
-                                    {:conv-items @(rf/subscribe [:inbox/items])})
+   ::inbox                {:state    (rf/subscribe [:inbox/main])
                            :render   inbox}
    ::you-stream           {:defaults {:click-stream #(rf/dispatch [:stream/set-active  %])}
                            :state    (rf/subscribe [:stream/main])
