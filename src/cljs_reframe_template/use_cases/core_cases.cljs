@@ -14,9 +14,10 @@
 (rf/reg-sub :stream/items (gdb [:stream]))
 (rf/reg-sub :inbox/items (gdb [:inbox-items]))
 (rf/reg-sub :sidebar (gdb [:sidebar]))
+(rf/reg-sub :conversation/main (gdb [:conversation]))
 
 
-
+(rf/reg-event-db :conversation/update-msg (sdb [:conversation :msg]))
 (rf/reg-event-db ::initialize-db (constantly db/default-db))
 (rf/reg-event-db ::set-active-panel [rf/debug] (sdb [:active-panel]))
 

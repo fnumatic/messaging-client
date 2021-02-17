@@ -71,8 +71,7 @@
    ["ID" "333222333"]])
 
 (def data
-  {:conversations (indexi-fy conversations)
-   :details-items details-items
+  {:details-items details-items
    })
 
 (def default-db
@@ -82,4 +81,7 @@
    :inbox-items (indexi-fy conversation-views)
    :sidebar {:sidebar1 (indexi-fy sidebar-items1)
              :sidebar2 (indexi-fy sidebar-items2)
-             :active1 1}})
+             :active1 1}
+   :conversation {:items (indexi-fy conversations)
+                  :msg "Hallo fool"
+                  :note "Note to myself"}})

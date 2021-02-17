@@ -352,19 +352,19 @@
    {:icon v/clock}
    {:icon v/check}])
 
-(defn conversation [{:keys [conversations]}]
+(defn conversation [{:keys [items msg update-msg]}]
   (let [{:conv/keys [style]} conversation-css
         {:conv/keys [top main convinput textarea]} (twl conversation-css)]
     [:div#conversation top
      [conversation-header {:person db/nt :actions conversation-header-actions}]
      [:div (merge main
                   style)
-      (u/spread-by-order conversation-item conversations)]
+      (u/spread-by-order conversation-item items)]
      [:div convinput
       [:textarea
        (merge textarea
-              {:value     "Hi"
-               :on-change identity})]]]))
+              {:value     msg
+               :on-change (comp update-msg u/target-value)})]]]))
 
 (defn card-item [{:keys [icon keyw]}]
   [:div  (tw hbox ic-x2 [:text-sm])
@@ -436,7 +436,8 @@
                                        :active @(rf/subscribe [:stream/get-active])})
 
                            :render   you-stream}
-   ::conversation         {:defaults  db/data
+   ::conversation         {:defaults  {:update-msg #(rf/dispatch [:conversation/update-msg  %])}
+                           :state (rf/subscribe [:conversation/main])
                            :render conversation}
    ::conversation-details {:defaults   db/data
                            :render conversation-settings}})
