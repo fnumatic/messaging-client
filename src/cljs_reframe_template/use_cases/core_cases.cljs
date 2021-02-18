@@ -5,7 +5,8 @@
    [tools.reframetools :refer [sdb gdb]]))
    ;[day8.re-frame.tracing :refer-macros [fn-traced defn-traced]]))
 
-
+(defn change-type [db [_ type]]
+  (assoc-in db [:conversation :reply?] (= type :reply)))
 
 (rf/reg-sub ::name (gdb [:name]))
 (rf/reg-sub ::active-panel (gdb [:active-panel]))
@@ -18,10 +19,13 @@
 
 
 (rf/reg-event-db :conversation/update-msg (sdb [:conversation :msg]))
+(rf/reg-event-db :conversation/update-note (sdb [:conversation :note]))
+(rf/reg-event-db :conversation/change-type change-type)
+
 (rf/reg-event-db ::initialize-db (constantly db/default-db))
 (rf/reg-event-db ::set-active-panel [rf/debug] (sdb [:active-panel]))
 
-(rf/reg-event-db :stream/set-active (sdb [:stream :active]))
+(rf/reg-event-db :stream/set-active (sdb [:stream :activee]))
 (rf/reg-event-db :sidebar/set-active (sdb [:sidebar :active1]))
 
 

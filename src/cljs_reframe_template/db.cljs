@@ -81,5 +81,6 @@
                          :active1  1}
    :conversation        {:items (indexi-fy conversations)
                          :msg   "Hallo fool"
-                         :note  "Note to myself"}
+                         :note  "Note to myself"
+                         :reply? true}
    :conversation-detail {:items details-items}})

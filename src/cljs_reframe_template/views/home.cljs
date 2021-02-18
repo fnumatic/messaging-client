@@ -111,7 +111,7 @@
    :edit/top           [vbox :flex-none :h-40 :p-4 :pt-2 :border :focus:border-blue-600 :shadow-lg :m-2 :rounded
                         :space-y-2 :hover:border-blue-600]
    :edit/header        [hbox  :space-x-6 :font-semibold :text-gray-500]
-   :edit/reply         [:text-blue-700 :border-b-2  :border-blue-700 :pb-1]
+   :edit/active-tab    [:text-blue-700 :border-b-2  :border-blue-700 :pb-1]
    :edit/menu-icon     [size-5 :text-gray-500]
    :edit/toolbar       [hbox bspread]
    :edit/actions       [hbox [:space-x-2]]
@@ -149,7 +149,7 @@
 (def stream-css
   {:block/container [hbox ic-x2]
    :block/block     [:border-l-2 :p-3 :space-y-4]
-   :block/crnt      [:border-blue-500 :bg-blue-100 ]
+   :block/crnt      [:border-blue-500 :bg-blue-100]
    :block/nocrnt    [:border-transparent :hover:bg-gray-100]
    :block/msgc      [:flex-grow :truncate :text-xs]
    :block/personc   [:flex-grow :truncate :text-sm]
@@ -195,7 +195,7 @@
 (defn sidebar-item [{:keys [id count icon activate-view active1]}]
   (let [{:item/keys [small-overlay red-white top iconc]}  sidebar-css
         {:item/keys [nonicon]} (twl sidebar-css)
-        active? (= id active1 )
+        active? (= id active1)
         top (twon active? [top :bg-gray-100])
         iconc (twon active? [iconc :text-blue-700])]
     [:a  (merge top  
@@ -272,8 +272,8 @@
 (defn stream-block [{:keys [id person person-short  time msg click-stream active]}]
   (let [{:block/keys [crnt nocrnt block]} stream-css
         {:block/keys [top container svg-small personc timec msgc]} (twl stream-css)
-        blockcss (if (= id active) [block crnt] [block nocrnt])
-        ]
+        blockcss (if (= id active) [block crnt] [block nocrnt])]
+        
         
     [:a.conversation-block  
      (merge top
@@ -363,25 +363,33 @@
   [v/book-open v/brief-case v/chart-bar v/chip
    v/clock v/globe v/paper-airplane v/phone v/plus v/star])
 
-(defn conversation-editor [{:keys [msg update-msg send-msg]}]
-  (let [{:edit/keys [top header textarea reply menu-icon toolbar actions button]} (twl conversation-css)
-        icon-cmp  #(-> [svg menu-icon %])]
+(defn conversation-editor [{:keys [msg update-msg send-msg note update-note save-note reply? change-type]}]
+  (let [{:edit/keys [top header textarea active-tab menu-icon toolbar actions button]} (twl conversation-css)
+        icon-cmp  #(-> [svg menu-icon %])
+        [reply notec ] (if reply? [active-tab nil] [nil active-tab] )
+        [update value action actionname] (if reply? 
+                                           [update-msg msg send-msg "Send"]
+                                           [update-note note save-note "Save"])]
+        
      [:div top
       [:div header
-       [:div reply "Reply"]
-       [:div "Note"]]
+       [:div (merge reply {:on-click #(change-type :reply)}) "Reply"]
+       [:div (merge notec {:on-click #(change-type :note)}) "Note"]]
       [:textarea
        (merge textarea
-              {:value     msg
-               :on-change (comp update-msg u/target-value)})]
+              {:value     value
+               :on-change (comp update u/target-value)})]
       [:div toolbar
        [:div actions
-        (u/spread-by-order icon-cmp edit-menu-icons )]
-       [:button (merge button
-                       {:on-click send-msg}) 
-        "Send"] ]]))
+        (u/spread-by-order icon-cmp edit-menu-icons)]
+       [:button (merge button {:on-click action}) actionname ]
+       
+       ]]))
+         
+       
+       
 
-(defn conversation [{:keys [items editor] }]
+(defn conversation [{:keys [items editor]}]
   (let [{:conv/keys [style]} conversation-css
         {:conv/keys [top main ]} (twl conversation-css)]
     [:div#conversation top
@@ -458,7 +466,10 @@
                            :state    (rf/subscribe [:stream/main])
                            :render   you-stream}
    ::conversation-editor  {:defaults {:update-msg #(rf/dispatch [:conversation/update-msg  %])
-                                      :send-msg  #(println "msg send")}
+                                      :send-msg  #(println "msg send")
+                                      :update-note #(rf/dispatch [:conversation/update-note %])
+                                      :save-note #(println "note saved")
+                                      :change-type #(rf/dispatch [:conversation/change-type %])}
                            :state    (rf/subscribe [:conversation/main])
                            :render   conversation-editor}
    ::conversation         {:defaults {:editor  (ig/ref ::conversation-editor)}
