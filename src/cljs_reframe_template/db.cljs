@@ -70,6 +70,13 @@
    ["Brand" "S&T"]
    ["ID" "333222333"]])
 
+(def conversation-header-actions
+  [{:icon v/dots-vertical}
+   {:icon v/user-circle}
+   {:icon v/star}
+   {:icon v/clock}
+   {:icon v/check}])
+
 
 (def default-db
   {:name                "re-frame"
@@ -80,6 +87,7 @@
                          :sidebar2 (indexi-fy sidebar-items2)
                          :active1  1}
    :conversation        {:items (indexi-fy conversations)
+                         :header {:person nt :actions conversation-header-actions :title ""}
                          :msg   "Hallo fool"
                          :note  "Note to myself"
                          :reply? true}

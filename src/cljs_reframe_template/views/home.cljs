@@ -354,13 +354,6 @@
     :hint [conversation-hint  data]
     [conversation-part data]))
 
-(def conversation-header-actions
-  [{:icon v/dots-vertical}
-   {:icon v/user-circle}
-   {:icon v/star}
-   {:icon v/clock}
-   {:icon v/check}])
-
 (def edit-menu-icons
   [v/book-open v/brief-case v/chart-bar v/chip
    v/clock v/globe v/paper-airplane v/phone v/plus v/star])
@@ -388,14 +381,11 @@
        
        ]]))
          
-       
-       
-
-(defn conversation [{:keys [items editor]}]
+(defn conversation [{:keys [items editor header]}]
   (let [{:conv/keys [style]} conversation-css
         {:conv/keys [top main ]} (twl conversation-css)]
     [:div#conversation top
-     [conversation-header {:person db/nt :actions conversation-header-actions}]
+     [conversation-header header]
      [:div (merge main
                   style)
       (u/spread-by-order conversation-item items)]
