@@ -25,9 +25,16 @@
    (fn [[current conversations] _]
      (get conversations current)))
 
+(rf/reg-sub :conversation/header
+   :<- [:conversation/main] 
+   (fn [d]
+     (println (:header d))
+     (:header d)) )
+
 (rf/reg-event-db :conversation/update-msg [rf/trim-v] (sdbx [:conversations first :msg] second))
 (rf/reg-event-db :conversation/update-note [rf/trim-v] (sdbx [:conversations first :note] second))
 (rf/reg-event-db :conversation/change-type [rf/trim-v] (sdbx [:conversations first :reply?] reply-type?))
+(rf/reg-event-db :conversation/change-title [rf/trim-v] (sdbx [:conversations first :header :title] second))
 
 (rf/reg-event-db ::initialize-db (constantly db/default-db))
 (rf/reg-event-db ::set-active-panel [rf/debug] (sdb [:active-panel]))

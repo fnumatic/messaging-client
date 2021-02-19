@@ -319,7 +319,7 @@
   (let [{:action/keys [iconc]} conversation-css]
     [svg (tw iconc) icon]))
 
-(defn conversation-header [{:keys [person title actions]}]
+(defn conversation-header [{:keys [id person title actions change-title]}]
   (let [{:header/keys [top person-top input act-cont]} (twl conversation-css)
         title  (or title "")]
     [:div top
@@ -327,9 +327,9 @@
       [:strong person]
       [:input (merge input
                      {:type        "text"
-                      :placeholder "Add coversation title"
+                      :placeholder "Add conversation title"
                       :value       title
-                      :on-change   identity})]]
+                      :on-change   (comp #(change-title id %) u/target-value)})]]
      [:div act-cont
       (u/spread-by-order conversation-header-action actions)]]))
 
@@ -361,7 +361,7 @@
 (defn conversation-editor [{:keys [id msg update-msg send-msg note update-note save-note reply? change-type] :as obj}]
   (let [{:edit/keys [top header textarea active-tab menu-icon toolbar actions button]} (twl conversation-css)
         icon-cmp  #(-> [svg menu-icon %])
-        [reply notec ] (if reply? [active-tab nil] [nil active-tab] )
+        [reply notec ] (if reply? [active-tab nil] [nil active-tab])
         [update value action actionname] (if reply? 
                                            [update-msg msg send-msg "Send"]
                                            [update-note note save-note "Save"])]
@@ -377,15 +377,15 @@
       [:div toolbar
        [:div actions
         (u/spread-by-order icon-cmp edit-menu-icons)]
-       [:button (merge button {:on-click action}) actionname ]
+       [:button (merge button {:on-click action}) actionname]]]))
        
-       ]]))
+       
          
 (defn conversation [{:keys [items editor header]}]
   (let [{:conv/keys [style]} conversation-css
         {:conv/keys [top main ]} (twl conversation-css)]
     [:div#conversation top
-     [conversation-header header]
+     [header]
      [:div (merge main
                   style)
       (u/spread-by-order conversation-item items)]
@@ -464,7 +464,11 @@
                                       :change-type #(rf/dispatch [:conversation/change-type %1 %2])}
                            :state    (rf/subscribe [:conversation/main])
                            :render   conversation-editor}
-   ::conversation         {:defaults {:editor  (ig/ref ::conversation-editor)}
+   ::conversation-header  {:defaults {:change-title #(rf/dispatch [:conversation/change-title %1 %2])}
+                           :state    (rf/subscribe [:conversation/header])
+                           :render    conversation-header}
+   ::conversation         {:defaults {:editor  (ig/ref ::conversation-editor)
+                                      :header  (ig/ref ::conversation-header)}
                            :state (rf/subscribe [:conversation/main])
                            :render conversation}
    ::conversation-details {:state (rf/subscribe [:conversation-detail/main])

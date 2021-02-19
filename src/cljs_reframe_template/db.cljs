@@ -79,7 +79,8 @@
 (defn conversation-template [[idx name short]]
   {:id idx
    :items (indexi-fy (conversations short))
-   :header {:person name
+   :header {:id idx
+            :person name
             :actions conversation-header-actions 
             :title ""}
    :msg   (str "Hello " name)
