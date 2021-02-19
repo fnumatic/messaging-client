@@ -28,7 +28,6 @@
 (rf/reg-sub :conversation/header
    :<- [:conversation/main] 
    (fn [d]
-     (println (:header d))
      (:header d)) )
 
 (rf/reg-event-db :conversation/update-msg [rf/trim-v] (sdbx [:conversations first :msg] second))
