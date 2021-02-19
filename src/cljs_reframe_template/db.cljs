@@ -7,12 +7,10 @@
   (map-indexed
    #(assoc %2 :id %1) coll))
 
-(def nt  "Nikola Tesla")
-
 
 (def conversation-stream
   [
-   [0 nt "NT" "5hr" true]
+   [0 "Nikola Tesla" "NT" "5hr" true]
    [1 "Fu Lan" "FL" "2mth"]
    [2 "natalia.alvarez@localhost" "N" "2mth"]
    [3 "aha" "A" "2mth"]
@@ -30,12 +28,12 @@
 (def cbd-list
   (map conv-block-data conversation-stream))
 
-(def conversations
-  [{:icon v/user-circle :msg "Some message text" :time "4hr ago"}
+(defn conversations [short]
+  [{:icon short :msg "Some message text" :time "4hr ago"}
    {:type :hint :msg "You assigned this conversation to yourself 5d ago"}
    {:icon v/user-circle :msg "Some message text" :time "5hr ago" :me true}
    {:icon v/user-circle :msg "Some message text" :time "6hr ago" :me true}
-   {:icon v/user-circle :msg "Some message text" :time "6.5hr ago"}
+   {:icon short :msg "Some message text" :time "6.5hr ago"}
    {:icon v/user-circle :msg "Some message text" :time "7hr ago" :me true}])
 
 (def conversation-views
@@ -78,9 +76,9 @@
    {:icon v/clock}
    {:icon v/check}])
 
-(defn conversation-template [[idx name]]
+(defn conversation-template [[idx name short]]
   {:id idx
-   :items (indexi-fy conversations)
+   :items (indexi-fy (conversations short))
    :header {:person name
             :actions conversation-header-actions 
             :title ""}

@@ -344,7 +344,7 @@
     [:div top
      (if me
        [svg iconc icon]
-       [text-icon def-texticon "NT"])
+       [text-icon def-texticon icon])
      [:div cont
       [:div msgc msg]
       [:div timec time]]]))
