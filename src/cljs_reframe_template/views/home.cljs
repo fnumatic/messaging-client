@@ -358,7 +358,7 @@
   [v/book-open v/brief-case v/chart-bar v/chip
    v/clock v/globe v/paper-airplane v/phone v/plus v/star])
 
-(defn conversation-editor [{:keys [msg update-msg send-msg note update-note save-note reply? change-type]}]
+(defn conversation-editor [{:keys [id msg update-msg send-msg note update-note save-note reply? change-type] :as obj}]
   (let [{:edit/keys [top header textarea active-tab menu-icon toolbar actions button]} (twl conversation-css)
         icon-cmp  #(-> [svg menu-icon %])
         [reply notec ] (if reply? [active-tab nil] [nil active-tab] )
@@ -368,12 +368,12 @@
         
      [:div top
       [:div header
-       [:div (merge reply {:on-click #(change-type :reply)}) "Reply"]
-       [:div (merge notec {:on-click #(change-type :note)}) "Note"]]
+       [:div (merge reply {:on-click #(change-type id :reply)}) "Reply"]
+       [:div (merge notec {:on-click #(change-type id :note)}) "Note"]]
       [:textarea
        (merge textarea
               {:value     value
-               :on-change (comp update u/target-value)})]
+               :on-change (comp #(update id %) u/target-value)})]
       [:div toolbar
        [:div actions
         (u/spread-by-order icon-cmp edit-menu-icons)]
@@ -457,11 +457,11 @@
    ::you-stream           {:defaults {:change-current #(rf/dispatch [:stream/set-current  %])}
                            :state    (rf/subscribe [:stream/main])
                            :render   you-stream}
-   ::conversation-editor  {:defaults {:update-msg #(rf/dispatch [:conversation/update-msg  %])
+   ::conversation-editor  {:defaults {:update-msg #(rf/dispatch [:conversation/update-msg %1 %2])
                                       :send-msg  #(println "msg send")
-                                      :update-note #(rf/dispatch [:conversation/update-note %])
+                                      :update-note #(rf/dispatch [:conversation/update-note %1 %2])
                                       :save-note #(println "note saved")
-                                      :change-type #(rf/dispatch [:conversation/change-type %])}
+                                      :change-type #(rf/dispatch [:conversation/change-type %1 %2])}
                            :state    (rf/subscribe [:conversation/main])
                            :render   conversation-editor}
    ::conversation         {:defaults {:editor  (ig/ref ::conversation-editor)}
