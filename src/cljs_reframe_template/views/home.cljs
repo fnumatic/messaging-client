@@ -358,9 +358,12 @@
   [v/book-open v/brief-case v/chart-bar v/chip
    v/clock v/globe v/paper-airplane v/phone v/plus v/star])
 
+(defn icon-cmp [data]
+  (let [{:edit/keys [menu-icon]} (twl conversation-css)]
+   [svg menu-icon data]))
+
 (defn conversation-editor [{:keys [id msg update-msg send-msg note update-note save-note reply? change-type] :as obj}]
-  (let [{:edit/keys [top header textarea active-tab menu-icon toolbar actions button]} (twl conversation-css)
-        icon-cmp  #(-> [svg menu-icon %])
+  (let [{:edit/keys [top header textarea active-tab toolbar actions button]} (twl conversation-css)
         [reply notec ] (if reply? [active-tab nil] [nil active-tab])
         [update value action actionname] (if reply? 
                                            [update-msg msg send-msg "Send"]
