@@ -96,7 +96,9 @@
 (def ic-x2 [:items-center :space-x-2])
 (def def-texticon [size-7 blue-white sm-semibold])
 
-
+(def main-css
+  {:main/top  [hbox [:h-screen :bg-gray-100]]
+   :main/content  [hbox [:flex-auto :bg-white :rounded-tl-xl :border-l :shadow-xl]]})
 
 (def conversation-css
   {:action/iconc       size-4
@@ -477,9 +479,7 @@
                            :render conversation}
    ::conversation-details {:state (rf/subscribe [:conversation-detail/main])
                            :render conversation-settings}})
-(def main-css
-  {:main/top  [hbox [:h-screen :bg-gray-100]]
-   :main/content  [hbox [:flex-auto :bg-white :rounded-tl-xl :border-l :shadow-xl]]})
+
 
 (defn main-component [{:keys [::sidebar ::inbox ::you-stream ::conversation ::conversation-details]}]
   (let [{:main/keys [top content]} (twl main-css)]
