@@ -81,7 +81,7 @@
 (def default-db
   {:name                "re-frame"
    :stream              {:items  (indexi-fy cbd-list)
-                         :active 0}
+                         :current 0}
    :inbox               {:items (indexi-fy conversation-views)}
    :sidebar             {:sidebar1 (indexi-fy sidebar-items1)
                          :sidebar2 (indexi-fy sidebar-items2)
