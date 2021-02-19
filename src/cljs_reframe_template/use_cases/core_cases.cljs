@@ -12,11 +12,19 @@
 (rf/reg-sub ::active-panel (gdb [:active-panel]))
 (rf/reg-sub ::re-pressed-example  (gdb [:re-pressed-example]))
 (rf/reg-sub :stream/main (gdb [:stream]))
+(rf/reg-sub :stream/current (gdb [:stream :current]))
 (rf/reg-sub :inbox/main (gdb [:inbox]))
 (rf/reg-sub :sidebar (gdb [:sidebar]))
-(rf/reg-sub :conversation/main (gdb [:conversation]))
+;(rf/reg-sub :conversation/main (gdb [:conversation]))
 (rf/reg-sub :conversation-detail/main (gdb [:conversation-detail]))
+(rf/reg-sub :conversations (gdb [:conversations]))
 
+
+(rf/reg-sub :conversation/main
+  :<- [:stream/current]
+  :<- [:conversations] 
+   (fn [[current conversations] _]
+     (get conversations current)))
 
 (rf/reg-event-db :conversation/update-msg (sdb [:conversation :msg]))
 (rf/reg-event-db :conversation/update-note (sdb [:conversation :note]))

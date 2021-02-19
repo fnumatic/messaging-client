@@ -12,22 +12,23 @@
 
 (def conversation-stream
   [
-   [nt "NT" "5hr" true]
-   ["Fu Lan" "FL" "2mth" ]
-   ["natalia.alvarez@localhost" "N" "2mth"]
-   ["aha" "A" "2mth"]
-   ["Nikola and 30 others" "NT" "2mth"]
-   ])
+   [0 nt "NT" "5hr" true]
+   [1 "Fu Lan" "FL" "2mth"]
+   [2 "natalia.alvarez@localhost" "N" "2mth"]
+   [3 "aha" "A" "2mth"]
+   [4 "Nikola and 30 others" "NT" "2mth"]])
+   
 
-(defn conv-block-data [[pers short time current]]
-  (cond-> {:person       pers
+(defn conv-block-data [[idx pers short time current]]
+  (cond-> {:id idx
+           :person       pers
            :person-short short
            :time         time
            :msg          "some message content whedkjwhed wkjehdkjweh dkjhwekjdhwekjhd "}
        current      (assoc :current true)))
 
 (def cbd-list
-  (map conv-block-data conversation-stream ))
+  (map conv-block-data conversation-stream))
 
 (def conversations
   [{:icon v/user-circle :msg "Some message text" :time "4hr ago"}
@@ -77,6 +78,21 @@
    {:icon v/clock}
    {:icon v/check}])
 
+(defn conversation-template [[idx name]]
+  {:id idx
+   :items (indexi-fy conversations)
+   :header {:person name
+            :actions conversation-header-actions 
+            :title ""}
+   :msg   (str "Hello " name)
+   :note  "Note to myself"
+   :reply? true})
+
+(def conversations-db
+  (->> conversation-stream
+       (map (juxt first conversation-template))
+       (into {})))
+  
 
 (def default-db
   {:name                "re-frame"
@@ -86,9 +102,5 @@
    :sidebar             {:sidebar1 (indexi-fy sidebar-items1)
                          :sidebar2 (indexi-fy sidebar-items2)
                          :active1  1}
-   :conversation        {:items (indexi-fy conversations)
-                         :header {:person nt :actions conversation-header-actions :title ""}
-                         :msg   "Hallo fool"
-                         :note  "Note to myself"
-                         :reply? true}
+   :conversations        conversations-db
    :conversation-detail {:items details-items}})
