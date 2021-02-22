@@ -113,7 +113,8 @@
    :edit/top           [vbox :flex-none :h-40 :p-4 :pt-2 :border :focus:border-blue-600 :shadow-lg :m-2 :rounded
                         :space-y-2 :hover:border-blue-600]
    :edit/header        [hbox  :space-x-6 :font-semibold :text-gray-500]
-   :edit/active-tab    [:text-blue-700 :border-b-2  :border-blue-700 :pb-1]
+   :edit/active        [:text-blue-700 :border-b-2  :border-blue-700 :pb-1 :cursor-default]
+   :edit/nonactive     [:cursor-pointer]
    :edit/menu-icon     [size-5 :text-gray-500]
    :edit/toolbar       [hbox bspread]
    :edit/actions       [hbox [:space-x-2]]
@@ -362,17 +363,17 @@
   (let [{:edit/keys [menu-icon]} (twl conversation-css)]
    [svg menu-icon data]))
 
-(defn conversation-editor [{:keys [msg update-msg send-msg note update-note save-note reply? change-type] :as obj}]
-  (let [{:edit/keys [top header textarea active-tab toolbar actions button]} (twl conversation-css)
-        [reply notec ] (if reply? [active-tab nil] [nil active-tab])
+(defn conversation-editor [{:keys [msg update-msg send-msg note update-note save-note reply? change-type]}]
+  (let [{:edit/keys [top header textarea active nonactive toolbar actions button]} (twl conversation-css)
+        [reply notec ] (if reply? [active nonactive] [nonactive active])
         [update value action actionname] (if reply? 
                                            [update-msg msg send-msg "Send"]
                                            [update-note note save-note "Save"])]
         
      [:div top
       [:div header
-       [:div (merge reply {:on-click #(change-type :reply)}) "Reply"]
-       [:div (merge notec {:on-click #(change-type :note)}) "Note"]]
+       [:a (merge reply {:on-click #(change-type :reply)}) "Reply"]
+       [:a (merge notec {:on-click #(change-type :note)}) "Note"]]
       [:textarea
        (merge textarea
               {:value     value
