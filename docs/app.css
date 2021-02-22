@@ -711,6 +711,14 @@ video {
   border-left-width: 1px;
 }
 
+.cursor-default {
+  cursor: default;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
 .block {
   display: block;
 }
