@@ -2,7 +2,7 @@
   (:require
    [re-frame.core :as rf]
    [cljs-reframe-template.db :as db]
-   [tools.reframetools :refer [sdb gdb sdbx]]))
+   [tools.reframetools :refer [sdb gdb sdbx sdbj]]))
    ;[day8.re-frame.tracing :refer-macros [fn-traced defn-traced]]))
 
 (defn reply-type? [[_ type]]
@@ -30,10 +30,10 @@
    (fn [d]
      (:header d)) )
 
-(rf/reg-event-db :conversation/update-msg [rf/trim-v] (sdbx [:conversations first :msg] second))
-(rf/reg-event-db :conversation/update-note [rf/trim-v] (sdbx [:conversations first :note] second))
-(rf/reg-event-db :conversation/change-type [rf/trim-v] (sdbx [:conversations first :reply?] reply-type?))
-(rf/reg-event-db :conversation/change-title [rf/trim-v] (sdbx [:conversations first :header :title] second))
+(rf/reg-event-db :conversation/update-msg  (sdbj [:conversations [:stream :current] :msg]))
+(rf/reg-event-db :conversation/update-note (sdbj [:conversations [:stream :current] :note]))
+(rf/reg-event-db :conversation/change-type (sdbj [:conversations [:stream :current] :reply?] reply-type?))
+(rf/reg-event-db :conversation/change-title (sdbj [:conversations [:stream :current] :header :title]))
 
 (rf/reg-event-db ::initialize-db (constantly db/default-db))
 (rf/reg-event-db ::set-active-panel [rf/debug] (sdb [:active-panel]))

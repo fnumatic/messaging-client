@@ -319,7 +319,7 @@
   (let [{:action/keys [iconc]} conversation-css]
     [svg (tw iconc) icon]))
 
-(defn conversation-header [{:keys [id person title actions change-title]}]
+(defn conversation-header [{:keys [person title actions change-title]}]
   (let [{:header/keys [top person-top input act-cont]} (twl conversation-css)
         title  (or title "")]
     [:div top
@@ -329,7 +329,7 @@
                      {:type        "text"
                       :placeholder "Add conversation title"
                       :value       title
-                      :on-change   (comp #(change-title id %) u/target-value)})]]
+                      :on-change   (comp change-title u/target-value)})]]
      [:div act-cont
       (u/spread-by-order conversation-header-action actions)]]))
 
@@ -362,7 +362,7 @@
   (let [{:edit/keys [menu-icon]} (twl conversation-css)]
    [svg menu-icon data]))
 
-(defn conversation-editor [{:keys [id msg update-msg send-msg note update-note save-note reply? change-type] :as obj}]
+(defn conversation-editor [{:keys [msg update-msg send-msg note update-note save-note reply? change-type] :as obj}]
   (let [{:edit/keys [top header textarea active-tab toolbar actions button]} (twl conversation-css)
         [reply notec ] (if reply? [active-tab nil] [nil active-tab])
         [update value action actionname] (if reply? 
@@ -371,12 +371,12 @@
         
      [:div top
       [:div header
-       [:div (merge reply {:on-click #(change-type id :reply)}) "Reply"]
-       [:div (merge notec {:on-click #(change-type id :note)}) "Note"]]
+       [:div (merge reply {:on-click #(change-type :reply)}) "Reply"]
+       [:div (merge notec {:on-click #(change-type :note)}) "Note"]]
       [:textarea
        (merge textarea
               {:value     value
-               :on-change (comp #(update id %) u/target-value)})]
+               :on-change (comp  update u/target-value)})]
       [:div toolbar
        [:div actions
         (u/spread-by-order icon-cmp edit-menu-icons)]
@@ -460,14 +460,14 @@
    ::you-stream           {:defaults {:change-current #(rf/dispatch [:stream/set-current  %])}
                            :state    (rf/subscribe [:stream/main])
                            :render   you-stream}
-   ::conversation-editor  {:defaults {:update-msg #(rf/dispatch [:conversation/update-msg %1 %2])
+   ::conversation-editor  {:defaults {:update-msg #(rf/dispatch [:conversation/update-msg %])
                                       :send-msg  #(println "msg send")
-                                      :update-note #(rf/dispatch [:conversation/update-note %1 %2])
+                                      :update-note #(rf/dispatch [:conversation/update-note %])
                                       :save-note #(println "note saved")
-                                      :change-type #(rf/dispatch [:conversation/change-type %1 %2])}
+                                      :change-type #(rf/dispatch [:conversation/change-type %])}
                            :state    (rf/subscribe [:conversation/main])
                            :render   conversation-editor}
-   ::conversation-header  {:defaults {:change-title #(rf/dispatch [:conversation/change-title %1 %2])}
+   ::conversation-header  {:defaults {:change-title #(rf/dispatch [:conversation/change-title %])}
                            :state    (rf/subscribe [:conversation/header])
                            :render    conversation-header}
    ::conversation         {:defaults {:editor  (ig/ref ::conversation-editor)
