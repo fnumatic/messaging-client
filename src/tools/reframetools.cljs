@@ -1,5 +1,8 @@
 (ns tools.reframetools)
 
+(defn repathv [db path]
+  (let [rp #(if (vector? %) (get-in db %) %)]
+    (mapv rp path)))
 
 (defn gdb
   [path]
@@ -22,5 +25,4 @@
    (sdbj path second))
   ([path fnv]
    (fn [db param]
-     (let [repath #(if (vector? %) (get-in db %) %)]
-       (assoc-in db (mapv repath path) (fnv param))))))
+     (assoc-in db (repathv db path) (fnv param)))))

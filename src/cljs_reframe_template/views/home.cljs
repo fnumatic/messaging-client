@@ -462,7 +462,7 @@
                            :state    (rf/subscribe [:stream/main])
                            :render   you-stream}
    ::conversation-editor  {:defaults {:update-msg #(rf/dispatch [:conversation/update-msg %])
-                                      :send-msg  #(println "msg send")
+                                      :send-msg  #(rf/dispatch [:conversation/send-msg ])
                                       :update-note #(rf/dispatch [:conversation/update-note %])
                                       :save-note #(println "note saved")
                                       :change-type #(rf/dispatch [:conversation/change-type %])}
