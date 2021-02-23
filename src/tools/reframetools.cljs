@@ -40,3 +40,9 @@
   (fn [db _]
     (let [v (get-in db (repathv db from))]
       (update-in db (repathv db to) #(fnv % v)))))
+
+(defn dispatch-n
+  [& events]
+  (println {:fx (mapv #(-> [:dispatch %]) events)})
+  (fn [_ _]
+    {:fx (mapv #(-> [:dispatch %]) events )}))

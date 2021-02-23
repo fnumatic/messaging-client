@@ -2,6 +2,8 @@
   (:require [cljs-reframe-template.svg :as v]))
 
 
+(def msg-path [:ui :lastmsg])
+
 
 (defn indexi-fy [coll]
   (map-indexed
