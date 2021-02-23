@@ -26,3 +26,17 @@
   ([path fnv]
    (fn [db param]
      (assoc-in db (repathv db path) (fnv param)))))
+
+(defn tdb 
+  "transport value from path to path, assoc with/without fn"
+  [from to fnv]
+  (fn [db _]
+    (let [v (get-in db (repathv db from))]
+     (assoc-in db (repathv db to) ((or fnv identity) v)))))
+
+(defn tudb
+  "transport value from path to path, update via fn"
+  [from to fnv]
+  (fn [db _]
+    (let [v (get-in db (repathv db from))]
+      (update-in db (repathv db to) #(fnv % v)))))
