@@ -43,6 +43,5 @@
 
 (defn dispatch-n
   [& events]
-  (println {:fx (mapv #(-> [:dispatch %]) events)})
   (fn [_ _]
     {:fx (mapv #(-> [:dispatch %]) events )}))
