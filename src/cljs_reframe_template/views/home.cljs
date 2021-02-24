@@ -186,7 +186,7 @@
    :view/countc           [:text-gray-600]
    :view/namec            [:flex-grow]
    :view/svgc             size-5
-   :view/top              [hbox ic-x2 :ml-1 :text-xs]})
+   :view/top              [hbox ic-x2 :ml-1 :text-xs :font-semibold :cursor-pointer]})
 
 (def component-css
   {:icon/textc [vbox :justify-center :rounded-full :text-center :flex-none]})
@@ -219,9 +219,12 @@
      [:div container
       (u/spread-by-id sidebar-item sidebar2)]]))
 
-(defn inbox-view [{:keys [icon name count]}]
-  (let [{:view/keys [top svgc namec countc]} (twl inbox-css)]
-    [:div top
+(defn inbox-view [{:keys [id icon name count current change-current]}]
+  (let [{:view/keys [top ]} inbox-css
+        {:view/keys [svgc namec countc]} (twl inbox-css)
+        top (twon (= id current) [top :text-blue-700])]
+    [:a (merge top
+               {:on-click #(change-current id)})
      [svg svgc icon]
 
      [:div namec name]
@@ -255,7 +258,7 @@
         fragm]])))
 
 
-(defn inbox [{:keys [items]}]
+(defn inbox [{:keys [items] :as opts}]
   (let [{:inbox/keys [top header h1c svgc]} (twl inbox-css)]
     [:div#inbox  top
      [:div header
@@ -263,7 +266,7 @@
       [svg svgc v/search-icon]]
      [inbox-block {:title "Conversations" :open? true}
       [:<>
-       (u/spread-by-id inbox-view items)
+       (u/spread-by-id inbox-view items opts)
        [inbox-action {:icon v/plus :name "Create View"}]
        [inbox-view-expand {:msg "See 124 more" :action "Edit"}]]]
      [inbox-block {:title "Automation"}
@@ -456,7 +459,8 @@
   {::sidebar              {:defaults {:activate-view #(rf/dispatch [:sidebar/set-active  %])}
                            :state (rf/subscribe [:sidebar]) 
                            :render   sidebar}
-   ::inbox                {:state    (rf/subscribe [:inbox/main])
+   ::inbox                {:defaults {:change-current #(rf/dispatch [:inbox/set-active %])}
+                           :state    (rf/subscribe [:inbox/main])
                            :render   inbox}
    ::you-stream           {:defaults {:change-current #(rf/dispatch [:stream/set-current  %])}
                            :state    (rf/subscribe [:stream/main])

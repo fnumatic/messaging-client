@@ -21,19 +21,38 @@
 (rf/reg-sub ::name (gdb [:name]))
 (rf/reg-sub ::active-panel (gdb [:active-panel]))
 (rf/reg-sub ::re-pressed-example  (gdb [:re-pressed-example]))
-(rf/reg-sub :stream/main (gdb [:stream]))
 (rf/reg-sub :stream/current (gdb [:stream :current]))
 (rf/reg-sub :inbox/main (gdb [:inbox]))
+(rf/reg-sub :inbox/current (gdb [:inbox :current]))
 (rf/reg-sub :sidebar (gdb [:sidebar]))
 (rf/reg-sub :conversation-detail/main (gdb [:conversation-detail]))
 (rf/reg-sub :conversations (gdb [:conversations]))
 
+(defn same-inbox [ conv inbox-token   ]
+  (= (:inbox conv) inbox-token))
+
+(rf/reg-sub :stream/main
+     :<- [:stream/current]  
+     :<- [:conversations/main] 
+    (fn [[stream conversations] _]
+      {:current stream
+       :items (map (comp :block second) conversations)}) )
+
+(rf/reg-sub :conversations/main 
+  :<- [:inbox/current]          
+  :<- [:conversations]
+   (fn [[inbox-token conversations] _]
+     (->>
+      conversations
+      (filter #(same-inbox (second %) inbox-token))
+      (into {})))         )
+
 
 (rf/reg-sub :conversation/main
   :<- [:stream/current]
-  :<- [:conversations] 
-   (fn [[current conversations] _]
-     (get conversations current)))
+  :<- [:conversations/main] 
+   (fn [[conversation-id conversations] _]
+      (get conversations conversation-id)))
 
 (rf/reg-sub :conversation/header
    :<- [:conversation/main] 
@@ -67,6 +86,10 @@
 
 (rf/reg-event-db :stream/set-current (sdb [:stream :current]))
 (rf/reg-event-db :sidebar/set-active (sdb [:sidebar :active1]))
+(rf/reg-event-db :inbox/set-active (sdb [:inbox :current]))
 
 
 
+(comment
+  (tap>   @re-frame.db/app-db)
+  ,)

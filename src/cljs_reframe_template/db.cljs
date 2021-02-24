@@ -27,8 +27,7 @@
            :msg          "some message content whedkjwhed wkjehdkjweh dkjhwekjdhwekjhd "}
        current      (assoc :current true)))
 
-(def cbd-list
-  (map conv-block-data conversation-stream))
+
 
 (defn conversations [short]
   [{:icon short :msg "Some message text" :time "4hr ago"}
@@ -78,16 +77,18 @@
    {:icon v/clock}
    {:icon v/check}])
 
-(defn conversation-template [[idx name short]]
+(defn conversation-template [[idx name short  time current]]
   {:id idx
    :items (indexi-fy (conversations short))
    :header {:id idx
             :person name
             :actions conversation-header-actions 
             :title ""}
+   :block (conv-block-data [idx name short time current])
    :msg   (str "Hello " name)
    :note  "Note to myself"
-   :reply? true})
+   :reply? true
+   :inbox 0})
 
 (def conversations-db
   (->> conversation-stream
@@ -97,9 +98,10 @@
 
 (def default-db
   {:name                "re-frame"
-   :stream              {:items  (indexi-fy cbd-list)
+   :stream              {
                          :current 0}
-   :inbox               {:items (indexi-fy conversation-views)}
+   :inbox               {:items (indexi-fy conversation-views)
+                         :current 0}
    :sidebar             {:sidebar1 (indexi-fy sidebar-items1)
                          :sidebar2 (indexi-fy sidebar-items2)
                          :active1  1}
