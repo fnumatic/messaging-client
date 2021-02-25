@@ -7,6 +7,7 @@
 
 https://fnumatic.github.io/messaging-client/
 
+image::fnumatic.github.io_messaging-client_.png[]
 
 == Using babashka
 
