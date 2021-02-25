@@ -388,15 +388,22 @@
        
        
          
-(defn conversation [{:keys [items editor header]}]
+(defn conversation [{:keys [id items editor header]}]
   (let [{:conv/keys [style]} conversation-css
         {:conv/keys [top main ]} (twl conversation-css)]
     [:div#conversation top
-     [header]
-     [:div (merge main
-                  style)
-      (u/spread-by-order conversation-item items)]
-     [editor]]))
+     (if (nil? id)
+       [:div (merge main style)
+        [:strong  "No Conversation selected"]]
+       [:<>
+        [header]
+        [:div (merge main style)
+         (u/spread-by-order conversation-item items)]
+        [editor]
+        ])]))
+          
+        
+     
 
 (defn card-item [{:keys [icon keyw]}]
   [:div  (tw hbox ic-x2 [:text-sm])
@@ -466,7 +473,7 @@
                            :state    (rf/subscribe [:stream/main])
                            :render   you-stream}
    ::conversation-editor  {:defaults {:update-msg #(rf/dispatch [:conversation/update-msg %])
-                                      :send-msg  #(rf/dispatch [:conversation/send-msg-flow ])
+                                      :send-msg  #(rf/dispatch [:conversation/send-msg-flow])
                                       :update-note #(rf/dispatch [:conversation/update-note %])
                                       :save-note #(println "note saved")
                                       :change-type #(rf/dispatch [:conversation/change-type %])}
