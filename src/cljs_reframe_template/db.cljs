@@ -1,5 +1,6 @@
 (ns cljs-reframe-template.db
-  (:require [cljs-reframe-template.svg :as v]))
+  (:require [cljs-reframe-template.svg :as v]
+            [cljs-reframe-template.testdata :as td]))
 
 
 (def msg-path [:ui :lastmsg])
@@ -8,6 +9,7 @@
 (defn indexi-fy [coll]
   (map-indexed
    #(assoc %2 :id %1) coll))
+
 
 
 (def conversation-stream
@@ -77,7 +79,7 @@
    {:icon v/clock}
    {:icon v/check}])
 
-(defn conversation-template [[idx name short  time current]]
+(defn conversation-template [[idx name short  time current inbox]]
   {:id idx
    :items (indexi-fy (conversations short))
    :header {:id idx
@@ -88,17 +90,31 @@
    :msg   (str "Hello " name)
    :note  "Note to myself"
    :reply? true
-   :inbox 0})
+   :inbox (or inbox 0)})
+
+(defn month-diff [d1 d2]
+  (+ (- (.getMonth d2) (.getMonth d1))
+     (* 12 (- (.getFullYear d2) (.getFullYear d1)))))
+
+(defn conv-templ [{:keys [id name short time inbox ]}]
+  (conversation-template 
+   [id name short 
+    (str (month-diff (js/Date. time) (js/Date.)) "mth") 
+    false inbox]))
+
+(defn conv-thread [inbox]
+  (comp (juxt :id conv-templ) #(assoc % :inbox inbox) td/create-conv))
 
 (def conversations-db
   (->> conversation-stream
        (map (juxt first conversation-template))
+       (concat (map (conv-thread 2) (range 20 30)))
+       (concat (map (conv-thread 3) (range 30 40)))
        (into {})))
   
 
 (def default-db
-  {:name                "re-frame"
-   :stream              {
+  {:stream              {
                          :current 0}
    :inbox               {:items (indexi-fy conversation-views)
                          :current 0}
@@ -106,4 +122,4 @@
                          :sidebar2 (indexi-fy sidebar-items2)
                          :active1  1}
    :conversations        conversations-db
-   :conversation-detail {:items details-items}})
+   :conversation-detail {:items details-items}}) 
