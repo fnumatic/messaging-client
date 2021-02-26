@@ -75,10 +75,7 @@
 (defn conversation-template [[idx name short  time current inbox]]
   {:id idx
    :items (indexi-fy (conversations short))
-   :header {:id idx
-            :person name
-            :action {:icon v/user-circle} 
-            :title ""}
+   :person name
    :block (conv-block-data [idx name short time current])
    :msg   (str "Hello " name)
    :note  "Note to myself"
@@ -116,3 +113,7 @@
                          :active1  1}
    :conversations        conversations-db
    :conversation-detail {:items details-items}}) 
+
+(comment
+  (merge {} [1 :foo] [2 :bar])
+  ,)

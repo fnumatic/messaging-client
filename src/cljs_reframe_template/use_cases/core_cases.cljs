@@ -18,6 +18,12 @@
 (defn append-msg [messages msg]
   (conj messages (message msg)))
 
+(defn header [{:keys [idx person]}]
+  {:id idx
+   :person person
+   :action {:icon v/user-circle}
+   :title ""})
+
 (rf/reg-sub ::name (gdb [:name]))
 (rf/reg-sub ::active-panel (gdb [:active-panel]))
 (rf/reg-sub ::re-pressed-example  (gdb [:re-pressed-example]))
@@ -59,7 +65,7 @@
 (rf/reg-sub :conversation/header
    :<- [:conversation/main] 
    (fn [d]
-     (:header d)) )
+     (header d)) )
 
 (defn- time-stamp []
   (.toLocaleTimeString (js/Date.)))
