@@ -39,7 +39,7 @@
    {:icon short :msg "Some message text" :time "6.5hr ago"}
    {:icon v/user-circle :msg "Some message text" :time "7hr ago" :me true}])
 
-(def conversation-views
+(def streams
   [{:icon v/user-circle :name "You" :count 5}
    {:icon v/at-symbol :name "Mentions" :count 0}
    {:icon v/user-circle :name "Unassigned" :count 2497}
@@ -116,7 +116,7 @@
 (def default-db
   {:stream              {
                          :current 0}
-   :inbox               {:items (indexi-fy conversation-views)
+   :inbox               {:items (indexi-fy streams)
                          :current 0}
    :sidebar             {:sidebar1 (indexi-fy sidebar-items1)
                          :sidebar2 (indexi-fy sidebar-items2)

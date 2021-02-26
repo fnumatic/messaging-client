@@ -33,9 +33,11 @@
 
 (rf/reg-sub :stream/main
      :<- [:stream/current]  
-     :<- [:conversations/main] 
-    (fn [[stream conversations] _]
+     :<- [:conversations/main]
+     :<- [:inbox/main]       
+    (fn [[stream conversations inbox] _]
       {:current stream
+       :name (->> (:items inbox) (filter #(= (:id %) (:current inbox))) first :name)
        :items (map (comp :block second) conversations)}) )
 
 (rf/reg-sub :conversations/main 

@@ -310,10 +310,10 @@
       [:div "newest"]
       [svg {} v/chevron-down]]]))
 
-(defn you-stream [{:keys [items ] :as opts}]
+(defn you-stream [{:keys [items name ] :as opts}]
   (let [{:you/keys [top blocks]} (twl stream-css)]
     [:div#you-stream top
-     [stream-header {:icon v/menu-alt-1 :name "You"}]
+     [stream-header {:icon v/menu-alt-1 :name name}]
      [stream-menu]
      [:div blocks
       (u/spread-by-id stream-block items opts)]]))
