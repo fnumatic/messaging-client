@@ -323,9 +323,17 @@
   (let [{:action/keys [iconc]} conversation-css]
     [svg (tw iconc) icon]))
 
-(defn conversation-header [{:keys [person title actions change-title]}]
+(defn header-actions [user]
+  [{:icon v/dots-vertical}
+   user
+   {:icon v/star}
+   {:icon v/clock}
+   {:icon v/check}])
+
+(defn conversation-header [{:keys [person title action change-title]}]
   (let [{:header/keys [top person-top input act-cont]} (twl conversation-css)
-        title  (or title "")]
+        title  (or title "")
+        actions (header-actions action)]
     [:div top
      [:div person-top
       [:strong person]

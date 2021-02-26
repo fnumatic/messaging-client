@@ -72,19 +72,12 @@
    ["Brand" "S&T"]
    ["ID" "333222333"]])
 
-(def conversation-header-actions
-  [{:icon v/dots-vertical}
-   {:icon v/user-circle}
-   {:icon v/star}
-   {:icon v/clock}
-   {:icon v/check}])
-
 (defn conversation-template [[idx name short  time current inbox]]
   {:id idx
    :items (indexi-fy (conversations short))
    :header {:id idx
             :person name
-            :actions conversation-header-actions 
+            :action {:icon v/user-circle} 
             :title ""}
    :block (conv-block-data [idx name short time current])
    :msg   (str "Hello " name)
