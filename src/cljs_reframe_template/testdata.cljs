@@ -1,4 +1,5 @@
-(ns cljs-reframe-template.testdata)
+(ns cljs-reframe-template.testdata
+  (:require [cljs-reframe-template.svg :as v]))
 
 
 (def firstn
@@ -116,6 +117,31 @@
    "2020-10-25T02:36:54Z"
    "2020-05-07T12:42:47Z"
    "2021-02-11T10:08:36Z"])
+
+(def icons
+  #:icon{:chip v/chip
+         :clock v/clock
+         :phone v/phone
+         :paper-airplane v/paper-airplane
+         :chart-bar v/chart-bar
+         :globe v/globe
+         :users v/users
+         :star v/star
+         :plus v/plus
+         :cog v/cog
+         :template v/template
+         :user v/user
+         :menu-alt-1 v/menu-alt-1
+         :brief-case v/brief-case
+         :user-circle v/user-circle
+         :search-icon v/search-icon
+         :at-symbol v/at-symbol
+         :chevron-left v/chevron-left
+         :book-open v/book-open
+         :bell v/bell
+         :chevron-down v/chevron-down
+         :dots-vertical v/dots-vertical
+         :check v/check})
 
 (defn create-conv [id]
   (let [[f l t] [(rand-nth firstn) (rand-nth lastn) (rand-nth times)]   ]

@@ -40,24 +40,26 @@
    {:icon v/user-circle :msg "Some message text" :time "7hr ago" :me true}])
 
 (def streams
-  [{:icon v/user-circle :name "You" :count 5}
-   {:icon v/at-symbol :name "Mentions" :count 0}
-   {:icon v/user-circle :name "Unassigned" :count 2497}
-   {:icon v/users :name "All" :count 5171}])
+  [{:icon :icon/user-circle :name "You" :count 5}
+   {:icon :icon/at-symbol :name "Mentions" :count 0}
+   {:icon :icon/user-circle :name "Unassigned" :count 2497}
+   {:icon :icon/users :name "All" :count 5171}])
 
 (def sidebar-items1
   [{}
-   {:icon v/brief-case :count "5" :active? true}
-   {:icon v/paper-airplane}
-   {:icon v/users}
-   {:icon v/book-open}
-   {:icon v/chip}
-   {:icon v/chart-bar}])
+   {:icon :icon/brief-case :count "5" :active? true}
+   {:icon :icon/paper-airplane}
+   {:icon :icon/users}
+   {:icon :icon/book-open}
+   {:icon :icon/chip}
+   {:icon :icon/chart-bar}])
 
 (def sidebar-items2
-  [{:icon v/template}
-   {:icon v/bell}
-   {:icon v/user-circle}])
+  [{:icon :icon/template}
+   {:icon :icon/bell}
+   {:icon :icon/user-circle}])
+
+
 
 (def details-items
   [["Bug Area" "Add"]
@@ -104,7 +106,8 @@
   
 
 (def default-db
-  {:stream              {
+  {:icons               td/icons
+   :stream              {
                          :current 0}
    :inbox               {:items (indexi-fy streams)
                          :current 0}
@@ -113,7 +116,3 @@
                          :active1  1}
    :conversations        conversations-db
    :conversation-detail {:items details-items}}) 
-
-(comment
-  (merge {} [1 :foo] [2 :bar])
-  ,)

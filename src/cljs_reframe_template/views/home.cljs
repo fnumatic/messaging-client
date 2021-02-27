@@ -472,7 +472,7 @@
 
 (def pageconfig
   {::sidebar              {:defaults {:activate-view #(rf/dispatch [:sidebar/set-active  %])}
-                           :state (rf/subscribe [:sidebar]) 
+                           :state (rf/subscribe [:sidebar/main]) 
                            :render   sidebar}
    ::inbox                {:defaults {:change-current #(rf/dispatch [:inbox/set-active %])}
                            :state    (rf/subscribe [:inbox/main])
