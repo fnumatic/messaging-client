@@ -11,8 +11,8 @@
  :deps    {org.clojure/clojure       {:mvn/version "RELEASE"},
            reagent/reagent           {:mvn/version "1.0.0"},
            ns-tracker/ns-tracker     {:mvn/version "0.4.0"},
-           org.clojure/clojurescript {:mvn/version "RELEASE"},
            integrant/integrant       {:mvn/version "0.8.0"},
+           meander/epsilon           {:mvn/version "0.0.602"},
 
            re-pressed/re-pressed     {:mvn/version "0.3.1"
                                       :exclusions  [re-frame reagent]},
@@ -21,5 +21,5 @@
            metosin/reitit-frontend   {:mvn/version "0.5.11"},
            metosin/reitit            {:mvn/version "0.5.11"},
            re-frame/re-frame         {:mvn/version "1.1.2"},
-           thheller/shadow-cljs      {:mvn/version "2.11.17"}},
+           thheller/shadow-cljs      {:mvn/version "2.11.18"}},
  :paths   ["src" "resources"  "test/cljs"]}
