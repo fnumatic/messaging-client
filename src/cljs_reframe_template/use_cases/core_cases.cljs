@@ -41,9 +41,9 @@
 
 (defn unrolling [to in from]
   (m/search
-   [in to from]
-   [?in (m/scan {?in ?id & ?rest}) {?id ?val} ]
-   (merge {?in ?val} ?rest)))
+   [to from]
+   [(m/scan {~in ?id & ?rest}) {?id ?val} ]
+   (merge {in ?val} ?rest)))
 
 (rf/reg-sub :sidebar/main
      :<- [:sidebar]
