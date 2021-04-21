@@ -14,10 +14,10 @@ image::fnumatic.github.io_messaging-client_.png[]
 https://github.com/babashka/babashka[babashka]
 
 ----
-./run watch
-./run compile
-./run release
-./run purgecss
-./run buildreport
+bb watch
+bb compile
+bb release
+bb purgecss
+bb buildreport
 ----
 
