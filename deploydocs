@@ -1,9 +1,0 @@
- #!/bin/sh
-
-RP=resources/public
-DOCS=docs
-
-mkdir $DOCS/js 2> /dev/null 
-cp $RP/index.html $DOCS
-cp -r $RP/*.css $DOCS
-cp $RP/js/main.js $DOCS/js
