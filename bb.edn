@@ -1,5 +1,7 @@
 ;;bb >= v1.35
-{:tasks
+{
+ :min-bb-version "0.3.6"
+ :tasks
  {:requires  ([babashka.fs :as fs])
   watch {:task (shell "npx shadow-cljs watch app")}
   compile {:task (shell "npx shadow-cljs compile app")}
@@ -10,17 +12,14 @@
 
   deploy-docs {:task (let [rp   "resources/public"
                            dest "docs"
-                           destjs (str dest "/js")
-                           cp-to (fn [f dir]  
-                                   (fs/copy f (fs/file (or dir dest) (fs/file-name f)) 
-                                            {:replace-existing true}))]
+                           destjs (str dest "/js")]
                        (do
-                         (fs/create-dirs destjs )
-                         (cp-to (fs/file rp "index.html") dest )
-                         (cp-to (fs/file rp "js/main.js") destjs)
-                         (run! (fn [f] (cp-to f dest)) (fs/glob rp "**.{css}") )
-                         nil
-                         ))}
+                         (fs/delete-tree dest)
+                         (fs/create-dirs destjs)
+                         (fs/copy (fs/file rp "index.html") dest)
+                         (fs/copy (fs/file rp "js/main.js") destjs)
+                         (run! (fn [f] (fs/copy f dest)) (fs/glob rp "**.{css}"))
+                         nil))}
  ;;tailwind 
   purgecss {:task (shell "npm run-script tw")}
  ;;shadow report
