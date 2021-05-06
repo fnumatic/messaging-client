@@ -1,13 +1,24 @@
 {
- :min-bb-version "0.3.6"
+ :min-bb-version "0.3.7"
  :tasks
  {:requires  ([babashka.fs :as fs])
+  :init        (do
+                 (def ansi-green "\u001B[32m") (def ansi-reset "\u001B[0m") (def ansi-yellow "\u001B[33m")
+                 (def target-folder "target")
+                 (defn current-date-formatted [pattern] (let [date (java.time.LocalDateTime/now)
+                                             formatter (java.time.format.DateTimeFormatter/ofPattern pattern)]
+                                         (.format date formatter)))
+                 (defn current-date-long [] (current-date-formatted  "yyyy-MM-dd HH:mm:ss"))
+                 (defn current-date-short [] (current-date-formatted  "yyyy-MM-dd"))
+                 )
+  :enter       (let [{:keys [name]} (current-task)] (println (current-date-long) ansi-yellow "[ ]" ansi-reset name))
+  :leave       (let [{:keys [name]} (current-task)] (println (current-date-long) ansi-green "[✔]︎" ansi-reset name))
   watch {:task (shell "npx shadow-cljs watch app")}
   compile {:task (shell "npx shadow-cljs compile app")}
   release {:task (shell "npx shadow-cljs release app")}
   ;;updates
   update-npm {:task (shell "npx npm-check-updates -u")}
-  update-deps {:task (shell "clojure -Aoutdated -a outdated --write")}
+  update-deps {:task (shell "clojure -Moutdated -a outdated --write")}
 
   deploy-docs {:task (let [rp   "resources/public"
                            dest "docs"
@@ -22,7 +33,5 @@
  ;;tailwind 
   purgecss {:task (shell "npm run-script tw")}
  ;;shadow report
-  buildreport {:task (let [date (java.time.LocalDateTime/now)
-                           formatter (java.time.format.DateTimeFormatter/ofPattern "yyyy-MM-dd")
-                           file (str "buildreport_" (.format date formatter) ".html")]
+  buildreport {:task (let [ file (str "buildreport_" (current-date-short) ".html")]
                        (shell (str "npx shadow-cljs run shadow.cljs.build-report app " file)))}}}
