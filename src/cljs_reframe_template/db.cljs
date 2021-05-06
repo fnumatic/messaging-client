@@ -1,25 +1,31 @@
 (ns cljs-reframe-template.db
   (:require [cljs-reframe-template.svg :as v]
+            [ribelo.doxa :as dx]
+            [nano-id.core :refer [nano-id]]
             [cljs-reframe-template.testdata :as td]))
 
 
 (def msg-path [:ui :lastmsg])
 
 
-(defn indexi-fy [coll]
-  (map-indexed
-   #(assoc %2 :id %1) coll))
+(defn indexi-fy
+  ([coll] (indexi-fy coll :id))
+  ([coll k]
+   (map-indexed
+    #(assoc %2 k %1) coll)))
 
+(defn nanoid-fy [coll]
+  (mapv
+   #(assoc % :message/id (nano-id)) coll))
 
 
 (def conversation-stream
-  [
-   [0 "Nikola Tesla" "NT" "5hr" true]
+  [[0 "Nikola Tesla" "NT" "5hr" true]
    [1 "Fu Lan" "FL" "2mth"]
    [2 "natalia.alvarez@localhost" "N" "2mth"]
    [3 "aha" "A" "2mth"]
    [4 "Nikola and 30 others" "NT" "2mth"]])
-   
+
 
 (defn conv-block-data [[idx pers short time current]]
   (cond-> {:id idx
@@ -27,37 +33,45 @@
            :person-short short
            :time         time
            :msg          "some message content whedkjwhed wkjehdkjweh dkjhwekjdhwekjhd "}
-       current      (assoc :current true)))
+    current      (assoc :current true)))
 
 
 
 (defn conversations [short]
   [{:icon short :msg "Some message text" :time "4hr ago"}
    {:type :hint :msg "You assigned this conversation to yourself 5d ago"}
-   {:icon v/user-circle :msg "Some message text" :time "5hr ago" :me true}
-   {:icon v/user-circle :msg "Some message text" :time "6hr ago" :me true}
+   {:icon [[:icon/id :icon/user-circle]] :msg "Some message text" :time "5hr ago" :me true}
+   {:icon [[:icon/id :icon/user-circle]] :msg "Some message text" :time "6hr ago" :me true}
    {:icon short :msg "Some message text" :time "6.5hr ago"}
-   {:icon v/user-circle :msg "Some message text" :time "7hr ago" :me true}])
+   {:icon [[:icon/id :icon/user-circle]] :msg "Some message text" :time "7hr ago" :me true}])
 
-(def streams
-  [{:icon :icon/user-circle :name "You" :count 5}
-   {:icon :icon/at-symbol :name "Mentions" :count 0}
-   {:icon :icon/user-circle :name "Unassigned" :count 2497}
-   {:icon :icon/users :name "All" :count 5171}])
+
+
+(def streams2
+  [{:icon  [[:icon/id :icon/user-circle]] :name "You" :count 5}
+   {:icon [[:icon/id :icon/at-symbol]] :name "Mentions" :count 0}
+   {:icon [[:icon/id :icon/user-circle]] :name "Unassigned" :count 2497}
+   {:icon [[:icon/id :icon/users]] :name "All" :count 5171}])
 
 (def sidebar-items1
-  [{}
-   {:icon :icon/brief-case :count "5" :active? true}
-   {:icon :icon/paper-airplane}
-   {:icon :icon/users}
-   {:icon :icon/book-open}
-   {:icon :icon/chip}
-   {:icon :icon/chart-bar}])
+  (->> 
+   
+   [{}
+    {:icon [[:icon/id :icon/brief-case]] :count "5" :active? true}
+    {:icon [[:icon/id :icon/paper-airplane]]}
+    {:icon [[:icon/id :icon/users]]}
+    {:icon [[:icon/id :icon/book-open]]}
+    {:icon [[:icon/id :icon/chip]]}
+    {:icon [[:icon/id :icon/chart-bar]]}]
+   (map #(assoc % :sb 1))))
+   
 
 (def sidebar-items2
-  [{:icon :icon/template}
-   {:icon :icon/bell}
-   {:icon :icon/user-circle}])
+  (->>
+   [{:icon [[:icon/id :icon/template]]}
+    {:icon [[:icon/id :icon/bell]]}
+    {:icon [[:icon/id :icon/user-circle]]}]
+   (map #(assoc % :sb 2))))
 
 
 
@@ -76,7 +90,7 @@
 
 (defn conversation-template [[idx name short  time current inbox]]
   {:id idx
-   :items (indexi-fy (conversations short))
+   :items (nanoid-fy (conversations short))
    :person name
    :block (conv-block-data [idx name short time current])
    :msg   (str "Hello " name)
@@ -88,10 +102,10 @@
   (+ (- (.getMonth d2) (.getMonth d1))
      (* 12 (- (.getFullYear d2) (.getFullYear d1)))))
 
-(defn conv-templ [{:keys [id name short time inbox ]}]
-  (conversation-template 
-   [id name short 
-    (str (month-diff (js/Date. time) (js/Date.)) "mth") 
+(defn conv-templ [{:keys [id name short time inbox]}]
+  (conversation-template
+   [id name short
+    (str (month-diff (js/Date. time) (js/Date.)) "mth")
     false inbox]))
 
 (defn conv-thread [inbox]
@@ -103,16 +117,88 @@
        (concat (map (conv-thread 2) (range 20 30)))
        (concat (map (conv-thread 3) (range 30 40)))
        (into {})))
-  
+
+(defn create-message
+  ([] (create-message (nano-id)))
+  ([id]
+   (->
+    {:db/id id
+     :db/type :messenger/message
+     :icon "SL"
+     :msg "some message"
+     :time "5hr ago"})))
+
+(defn create-messages [short]
+  (nanoid-fy (conversations short)))
+
+(defn create-person-with-data [inbox]
+  (let [p (td/create-person)]
+    (-> p
+        (assoc :messages  (create-messages (:short p)))
+        (assoc :inbox inbox))))
+
+(defn build-doxa []
+  (-> {}
+   (dx/db-with (map #(-> {:icon/id (first %) :value (second %)}) td/icons))
+   (dx/db-with (indexi-fy streams2 :inbox/id))
+   (dx/db-with (indexi-fy (concat sidebar-items1 sidebar-items2) :sb-item/id))
+   (dx/db-with (mapv #(create-person-with-data 0) (range 0 10)))
+   (dx/db-with (mapv #(create-person-with-data 1) (range 0 10)))
+   (dx/db-with (mapv #(create-person-with-data 2) (range 0 10)))))
 
 (def default-db
-  {:icons               td/icons
-   :stream              {
-                         :current 0}
-   :inbox               {:items (indexi-fy streams)
-                         :current 0}
-   :sidebar             {:sidebar1 (indexi-fy sidebar-items1)
-                         :sidebar2 (indexi-fy sidebar-items2)
-                         :active1  1}
+  
+  {;;:icons               td/icons
+   :stream              {:current nil}
+   :inbox               {:current 0}
+   :sidebar             {:active1  1}
    :conversations        conversations-db
-   :conversation-detail {:items details-items}}) 
+   :conversation-detail {:items details-items}
+   :db (build-doxa)})
+
+(defn pull-ids [id db]
+  (mapv #(-> [id %]) (keys (get db id))))
+(def dummy
+  (-> {}
+      (dx/db-with (map #(-> {:icon/id (first %) :value (second %)}) td/icons))
+      (dx/db-with (indexi-fy streams2 :inbox/id))))
+
+(def icon-shape '[:name {:icon [:value]}])
+(defn ddb [] (:db @re-frame.db/app-db))
+#_:clj-kondo/ignore
+(comment
+   (tap> sidebar-items1)
+  
+  (tap>   @re-frame.db/app-db)
+  dummy
+  (dx/q [:find ?e
+         :where [?e :count 2497]] dummy)
+  ;;sidebar items
+  (dx/q [:find [(pull [:name {:icon [:value]}] [:sb-item/id ?e]) ...]
+         :where [?e :sb 2]] (ddb))
+  
+  ;;persons for stream
+  (dx/q [:find [(pull [:inbox :short :name] [:person/id ?e]) ...]
+         :where [?e :inbox 0] [?e :person/id]] (ddb))
+  ;;specific inbox
+  (dx/pull (ddb) [:name] [:inbox/id 0])
+
+  (dx/pull (ddb) {[:icon/id :icon/brief-case] [:*]})
+  (dx/pull (ddb) [:*]  (conj (mapv #(-> [:sb-item/id %]) [0 1 7 8]) [:sb 2]))
+
+  (dx/pull (ddb)  [:value]  (pull-ids :icon/id (ddb)))
+  (dx/pull dummy icon-shape [:inbox/id 0])
+  (dx/pull (ddb)  [:value] [[:icon/id] ...])
+  (nano-id)
+  (dx/haul dummy :inbox/id)
+
+  (dx/commit {} [[:dx/put {:db/id 1 :name "foo"}]])
+  (take 3 conversations-db)
+  (take-last 1 conversations-db)
+  (dx/db-with {}
+              (map  td/create-person (range 1 10)))
+
+  (dx/db-with {}
+              (map  create-message (range 10 20)))
+  
+  )

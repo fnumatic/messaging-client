@@ -1,5 +1,7 @@
 (ns cljs-reframe-template.testdata
-  (:require [cljs-reframe-template.svg :as v]))
+  (:require [cljs-reframe-template.svg :as v]
+            [nano-id.core :refer [nano-id]]
+            ))
 
 
 (def firstn
@@ -150,3 +152,15 @@
      :short (str (first f) (first l))
      :time  t  })
   )
+
+(defn create-person
+  ([] (create-person (nano-id)))
+  ([id]
+   (let [[f l t] [(rand-nth firstn) (rand-nth lastn) (rand-nth times)]]
+     {:person/id    (or id 0)
+      :name  (str f " " l)
+      :short (str (first f) (first l))
+      :reply-msg (str "Hello " (str f " " l))
+      :note "Note to myself"
+      :block-msg "some message content"
+      :time  t})))

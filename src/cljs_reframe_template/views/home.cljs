@@ -160,7 +160,7 @@
    :block/svg-small icon-sm
    :block/timec     [:text-xs :text-gray-600]
    :block/top       [:block :border-b]
-   :header/h1       [_2xl-semibold :flex-grow]
+   :header/h1       [:2xl-semibold :flex-grow]
    :header/svgc     icon-lg
    :header/top      [hbox ic-x2 :p-3]
    :menu/container  [hbox ic-x2]
@@ -195,17 +195,17 @@
   (let [{:icon/keys [textc]} component-css]
    [:div (tw textc opts) txt]))
 
-(defn sidebar-item [{:keys [id count icon activate-view active1]}]
+(defn sidebar-item [{:keys [sb-item/id count icon activate-view active1]}]
   (let [{:item/keys [small-overlay red-white top iconc]}  sidebar-css
         {:item/keys [nonicon]} (twl sidebar-css)
         active? (= id active1)
         top (twon active? [top :bg-gray-100])
         iconc (twon active? [iconc :text-blue-700])]
-    [:a  (merge top  
+    [:a  (merge top
                 {:href "#"}
                 (when activate-view {:on-click #(activate-view id)}))
      (if icon
-       [svg iconc icon]
+       [svg iconc (:value icon)]
        [:div nonicon])
      (when count
        [text-icon [small-overlay red-white] count])]))
@@ -214,19 +214,18 @@
   (let [{:main/keys [top container]} (twl sidebar-css)]
     [:div#sidebar top
      [:div container
-      (u/spread-by-id sidebar-item sidebar1 opts)]
+      (u/spread-by-id2 #'sidebar-item sidebar1 :sb-item/id opts)]
 
      [:div container
-      (u/spread-by-id sidebar-item sidebar2)]]))
+      (u/spread-by-id2 #'sidebar-item sidebar2 :sb-item/id)]]))
 
-(defn inbox-view [{:keys [id icon name count current change-current]}]
+(defn inbox-view [{:keys [inbox/id icon name count current change-current] :as obj}]
   (let [{:view/keys [top ]} inbox-css
         {:view/keys [svgc namec countc]} (twl inbox-css)
         top (twon (= id current) [top :text-blue-700])]
     [:a (merge top
                {:on-click #(change-current id)})
-     [svg svgc icon]
-
+     [svg svgc (:value icon)]
      [:div namec name]
      [:div countc count]]))
 
@@ -266,7 +265,7 @@
       [svg svgc v/search-icon]]
      [inbox-block {:title "Conversations" :open? true}
       [:<>
-       (u/spread-by-id inbox-view items opts)
+       (u/spread-by-id2 inbox-view items :inbox/id opts)
        [inbox-action {:icon v/plus :name "Create View"}]
        [inbox-view-expand {:msg "See 124 more" :action "Edit"}]]]
      [inbox-block {:title "Automation"}
@@ -275,23 +274,21 @@
        [inbox-view-expand {:msg "See 42 more" :action "Edit"}]]]
      [inbox-block {:title "Your preferences"}]]))
 
-(defn stream-block [{:keys [id person person-short  time msg change-current current]}]
+(defn stream-block [{:keys [person/id name short  time block-msg change-current current] }]
   (let [{:block/keys [crnt nocrnt block]} stream-css
         {:block/keys [top container svg-small personc timec msgc]} (twl stream-css)
         blockcss (if (= id current) [block crnt] [block nocrnt])]
-        
-        
     [:a.conversation-block  
      (merge top
             {:on-click #(change-current id)})
      [:div (tw blockcss)
       [:div container
-       [text-icon def-texticon person-short]
-       [:strong personc person]
-       [:div timec time]]
+       [text-icon def-texticon short]
+       [:strong personc name]
+       [:div timec (subs time 0 4)]]
       [:div container
        [svg svg-small v/user-circle]
-       [:div msgc msg]]]]))
+       [:div msgc block-msg]]]]))
 
 (defn stream-header [{:keys [icon name]}]
   (let [{:header/keys [top svgc h1]} (twl stream-css)]
@@ -310,13 +307,13 @@
       [:div "newest"]
       [svg {} v/chevron-down]]]))
 
-(defn you-stream [{:keys [items name ] :as opts}]
+(defn you-stream [{:keys [items stream-name ] :as opts}]
   (let [{:you/keys [top blocks]} (twl stream-css)]
     [:div#you-stream top
-     [stream-header {:icon v/menu-alt-1 :name name}]
+     [stream-header {:icon v/menu-alt-1 :name stream-name}]
      [stream-menu]
      [:div blocks
-      (u/spread-by-id stream-block items opts)]]))
+      (u/spread-by-id2 stream-block items :person/id opts)]]))
 
 
 (defn conversation-header-action [{:keys [icon]}]
@@ -355,7 +352,7 @@
         top (if me  topreverse top)]
     [:div top
      (if me
-       [svg iconc icon]
+       [svg iconc (:value icon)]
        [text-icon def-texticon icon])
      [:div cont
       [:div msgc msg]
@@ -374,13 +371,13 @@
   (let [{:edit/keys [menu-icon]} (twl conversation-css)]
    [svg menu-icon data]))
 
-(defn conversation-editor [{:keys [msg update-msg send-msg note update-note save-note reply? change-type]}]
+(defn conversation-editor [{:keys [reply-msg update-msg send-msg note update-note save-note reply? change-type] :as obj}]
   (let [{:edit/keys [top header textarea active nonactive toolbar actions button]} (twl conversation-css)
         [reply notec ] (if reply? [active nonactive] [nonactive active])
         [update value action actionname] (if reply? 
-                                           [update-msg msg send-msg "Send"]
+                                           [update-msg reply-msg send-msg "Send"]
                                            [update-note note save-note "Save"])]
-        
+     (tap> obj)   
      [:div top
       [:div header
        [:a (merge reply {:on-click #(change-type :reply)}) "Reply"]
@@ -396,7 +393,7 @@
        
        
          
-(defn conversation [{:keys [id items editor header]}]
+(defn conversation [{:keys [person/id messages editor header]}]
   (let [{:conv/keys [style]} conversation-css
         {:conv/keys [top main ]} (twl conversation-css)]
     [:div#conversation top
@@ -406,9 +403,9 @@
        [:<>
         [header]
         [:div (merge main style)
-         (u/spread-by-order conversation-item items)]
-        [editor]
-        ])]))
+         (u/spread-by-order conversation-item messages)]
+        [editor]])]))
+        
           
         
      
