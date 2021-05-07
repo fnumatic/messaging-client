@@ -19,31 +19,14 @@
    #(assoc % :message/id (nano-id)) coll))
 
 
-(def conversation-stream
-  [[0 "Nikola Tesla" "NT" "5hr" true]
-   [1 "Fu Lan" "FL" "2mth"]
-   [2 "natalia.alvarez@localhost" "N" "2mth"]
-   [3 "aha" "A" "2mth"]
-   [4 "Nikola and 30 others" "NT" "2mth"]])
-
-
-(defn conv-block-data [[idx pers short time current]]
-  (cond-> {:id idx
-           :person       pers
-           :person-short short
-           :time         time
-           :msg          "some message content whedkjwhed wkjehdkjweh dkjhwekjdhwekjhd "}
-    current      (assoc :current true)))
-
-
-
 (defn conversations [short]
-  [{:icon short :msg "Some message text" :time "4hr ago"}
-   {:type :hint :msg "You assigned this conversation to yourself 5d ago"}
-   {:icon [[:icon/id :icon/user-circle]] :msg "Some message text" :time "5hr ago" :me true}
-   {:icon [[:icon/id :icon/user-circle]] :msg "Some message text" :time "6hr ago" :me true}
-   {:icon short :msg "Some message text" :time "6.5hr ago"}
-   {:icon [[:icon/id :icon/user-circle]] :msg "Some message text" :time "7hr ago" :me true}])
+  (shuffle
+   [{:icon short :msg "Some message text" :time "4hr ago"}
+    {:type :hint :msg "You assigned this conversation to yourself 5d ago"}
+    {:icon [[:icon/id :icon/user-circle]] :msg "Some message text" :time "5hr ago" :me true}
+    {:icon [[:icon/id :icon/user-circle]] :msg "Some message text" :time "6hr ago" :me true}
+    {:icon short :msg "Some message text" :time "6.5hr ago"}
+    {:icon [[:icon/id :icon/user-circle]] :msg "Some message text" :time "7hr ago" :me true}]))
 
 
 
@@ -88,35 +71,10 @@
    ["Brand" "S&T"]
    ["ID" "333222333"]])
 
-(defn conversation-template [[idx name short  time current inbox]]
-  {:id idx
-   :items (nanoid-fy (conversations short))
-   :person name
-   :block (conv-block-data [idx name short time current])
-   :msg   (str "Hello " name)
-   :note  "Note to myself"
-   :reply? true
-   :inbox (or inbox 0)})
-
 (defn month-diff [d1 d2]
   (+ (- (.getMonth d2) (.getMonth d1))
      (* 12 (- (.getFullYear d2) (.getFullYear d1)))))
 
-(defn conv-templ [{:keys [id name short time inbox]}]
-  (conversation-template
-   [id name short
-    (str (month-diff (js/Date. time) (js/Date.)) "mth")
-    false inbox]))
-
-(defn conv-thread [inbox]
-  (comp (juxt :id conv-templ) #(assoc % :inbox inbox) td/create-conv))
-
-(def conversations-db
-  (->> conversation-stream
-       (map (juxt first conversation-template))
-       (concat (map (conv-thread 2) (range 20 30)))
-       (concat (map (conv-thread 3) (range 30 40)))
-       (into {})))
 
 (defn create-message
   ([] (create-message (nano-id)))
@@ -137,24 +95,23 @@
         (assoc :messages  (create-messages (:short p)))
         (assoc :inbox inbox))))
 
-(defn build-doxa []
-  (-> {}
-   (dx/db-with (map #(-> {:icon/id (first %) :value (second %)}) td/icons))
-   (dx/db-with (indexi-fy streams2 :inbox/id))
-   (dx/db-with (indexi-fy (concat sidebar-items1 sidebar-items2) :sb-item/id))
-   (dx/db-with (mapv #(create-person-with-data 0) (range 0 10)))
-   (dx/db-with (mapv #(create-person-with-data 1) (range 0 10)))
-   (dx/db-with (mapv #(create-person-with-data 2) (range 0 10)))))
+(def doxadb
+  (concat
+   (map #(-> {:icon/id (first %) :value (second %)}) td/icons)
+   (indexi-fy streams2 :inbox/id)
+   (indexi-fy (concat sidebar-items1 sidebar-items2) :sb-item/id)
+   (map #(create-person-with-data 0) (range 0 10))
+   (map #(create-person-with-data 1) (range 0 10))
+   (map #(create-person-with-data 2) (range 0 10))))
 
 (def default-db
   
   {;;:icons               td/icons
    :stream              {:current nil}
    :inbox               {:current 0}
-   :sidebar             {:active1  1}
-   :conversations        conversations-db
+   :sidebar             {:active1 1}
    :conversation-detail {:items details-items}
-   :db (build-doxa)})
+   :db (dx/db-with {} doxadb)})
 
 (defn pull-ids [id db]
   (mapv #(-> [id %]) (keys (get db id))))
@@ -191,14 +148,11 @@
   (dx/pull (ddb)  [:value] [[:icon/id] ...])
   (nano-id)
   (dx/haul dummy :inbox/id)
-
   (dx/commit {} [[:dx/put {:db/id 1 :name "foo"}]])
-  (take 3 conversations-db)
-  (take-last 1 conversations-db)
   (dx/db-with {}
               (map  td/create-person (range 1 10)))
 
   (dx/db-with {}
-              (map  create-message (range 10 20)))
+              (map  create-message (range 10 20))))
   
-  )
+  

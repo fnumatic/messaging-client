@@ -145,6 +145,11 @@
          :dots-vertical v/dots-vertical
          :check v/check})
 
+(def messages
+  ["some message" "some info" "more of this" "more of that" "Very important!" "please note"
+   "very cool" "Watch this!" "Hello, look"])
+
+
 (defn create-conv [id]
   (let [[f l t] [(rand-nth firstn) (rand-nth lastn) (rand-nth times)]   ]
     {:id    (or id 0)
@@ -162,5 +167,5 @@
       :short (str (first f) (first l))
       :reply-msg (str "Hello " (str f " " l))
       :note "Note to myself"
-      :block-msg "some message content"
+      :block-msg (rand-nth messages)
       :time  t})))
