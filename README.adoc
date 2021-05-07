@@ -9,6 +9,17 @@ https://fnumatic.github.io/messaging-client/
 
 image::fnumatic.github.io_messaging-client_.png[]
 
+== doxa
+
+https://github.com/ribelo/doxa
+
+Using doxa as an attempt to use a normalized db in combination with re-frame.
+
+* as of now using
+** pull syntax, to control the shape of result set
+** datalog query, to filter
+
+
 == Using babashka
 
 https://github.com/babashka/babashka[babashka]
