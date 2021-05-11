@@ -15,7 +15,7 @@
            meander/epsilon           {:mvn/version "0.0.602"},
            nano-id/nano-id           {:mvn/version "1.0.0"},
            ribelo/doxa ^:depot/ignore   {:git/url "https://github.com/ribelo/doxa"
-                                      :sha "7ca77e5826676bd84153dfe3b8e9642dbbc97ad0"} 
+                                      :sha "83de44e00c33e65b92adad0ce4f60b411f42abcf"} 
            re-pressed/re-pressed     {:mvn/version "0.3.1"
                                       :exclusions  [re-frame/re-frame reagent/reagent]},
            garden/garden             {:mvn/version "1.3.10"},
