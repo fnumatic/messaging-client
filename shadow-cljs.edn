@@ -4,6 +4,8 @@
  :builds {:app {:target           :browser
                 :asset-path       "js"
                 :output-dir       "resources/public/js"
+                :build-hooks      [(teknql.tailwind/start-watch!)]
+                :tailwind/output  "resources/public/app.css"
                 :compiler-options {:infer-externs :auto}
                 :modules          {
                                    :main {:entries [cljs-reframe-template.core]
