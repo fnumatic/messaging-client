@@ -132,7 +132,7 @@
    :part/msgc          [:bg-gray-200 :rounded :p-5]
    :part/timec         [:text-sm :text-gray-600]
    :part/top           [hbox :space-x-2]
-   :part/topreverse    [hbox :space-x-2 :flex-row-reverse :space-x-reverse]
+   :part/topreverse    [:flex :space-x-2 :flex-row-reverse :space-x-reverse]
 
    :settings/container [vbox :space-y-4 :p-4]
    :settings/cards-header [hbox bspread]
@@ -350,6 +350,7 @@
 (defn conversation-part [{:keys [icon msg time me]}]
   (let [{:part/keys [top topreverse iconc cont msgc timec]} (twl conversation-css)
         top (if me  topreverse top)]
+    (println top)
     [:div top
      (if me
        [svg iconc (:value icon)]
