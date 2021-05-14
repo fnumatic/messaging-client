@@ -20,7 +20,8 @@
   (re-frame/clear-subscription-cache!)
   (styl/inject-trace-styles js/document)
   (render [views/main-panel]
-          (.getElementById js/document "app")))
+          (.getElementById js/document "app")
+          (reagent.core/create-compiler {:function-components true})))
 
 (defn ^:after-load re-render []
   (mount-root))
