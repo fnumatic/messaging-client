@@ -2,17 +2,13 @@
   {:clj-kondo/config '{:lint-as {reagent.core/with-let clojure.core/let}}}
   (:require
    [re-frame.core :as rf]
-   [reagent.core :as r]
-   [reagent.ratom :as ra]
+   [reagent.core :as r :refer [with-let]]
    [cljs-reframe-template.tools.reagent-hooks :refer [use-state]]
    [cljs-reframe-template.use-cases.core-cases :as ccases]
    [cljs-reframe-template.svg :as v :refer [svg]]
-   [cljs-reframe-template.db :as db]
    [cljs-reframe-template.views.utils :as u]
    [integrant.core :as ig]
-   [tools.viewtools :as vt]
-   [cljs.pprint :as pp]
-   [cljs-reframe-template.views.compo :as compo]))
+   [cljs.pprint :as pp] ))
 
 
 (defn component [{:keys [defaults on-mount state render ui]}]
@@ -25,16 +21,6 @@
 
 (defmethod ig/init-key :default [_ config]
   (component config))
-
-(def toolbar-items
-  [["#" :routes/frontpage]
-   ["component" :routes/component]])
-
-(defn route-info [route]
-  [:div.m-4
-   [:p "Routeinfo"]
-   [:pre.border-solid.border-2.rounded
-    (with-out-str (pp/pprint route))]])
 ;; main
 
 (defn show-panel [route]
@@ -47,10 +33,6 @@
 (defn main-panel []
   (let [active-route (rf/subscribe [::ccases/active-panel])]
     [show-panel @active-route]))
-
-
-(def conversation-background-img
-  "url(https://static.intercomassets.com/ember/assets/images/messenger-backgrounds/background-1-99a36524645be823aabcd0e673cb47f8.png)")
 
 (defn tw 
   "nested coll of tw classes to :class map
@@ -195,12 +177,11 @@
   (let [{:icon/keys [textc]} component-css]
    [:div (tw textc opts) txt]))
 
-(defn sidebar-item [{:keys [sb-item/id count icon activate-view active1]}]
+(defn sidebar-item [{:keys [sb-item/id count icon activate-view current] } ]
   (let [{:item/keys [small-overlay red-white top iconc]}  sidebar-css
         {:item/keys [nonicon]} (twl sidebar-css)
-        active? (= id active1)
-        top (twon active? [top :bg-gray-100])
-        iconc (twon active? [iconc :text-blue-700])]
+        top (twon current [top :bg-gray-100])
+        iconc (twon current [iconc :text-blue-700])]
     [:a  (merge top
                 {:href "#"}
                 (when activate-view {:on-click #(activate-view id)}))
@@ -214,10 +195,10 @@
   (let [{:main/keys [top container]} (twl sidebar-css)]
     [:div#sidebar top
      [:div container
-      (u/spread-by-id2 #'sidebar-item sidebar1 :sb-item/id opts)]
+      (u/spread-by-id2 sidebar-item sidebar1 :sb-item/id (dissoc opts :sidebar1 :sidebar2))]
 
      [:div container
-      (u/spread-by-id2 #'sidebar-item sidebar2 :sb-item/id)]]))
+      (u/spread-by-id2 sidebar-item sidebar2 :sb-item/id)]]))
 
 (defn inbox-view [{:keys [inbox/id icon name count current change-current] :as obj}]
   (let [{:view/keys [top ]} inbox-css
@@ -274,10 +255,10 @@
        [inbox-view-expand {:msg "See 42 more" :action "Edit"}]]]
      [inbox-block {:title "Your preferences"}]]))
 
-(defn stream-block [{:keys [person/id name short  time block-msg change-current current] }]
+(defn stream-block [{:keys [person/id name short  time block-msg change-current current]}]
   (let [{:block/keys [crnt nocrnt block]} stream-css
         {:block/keys [top container svg-small personc timec msgc]} (twl stream-css)
-        blockcss (if (= id current) [block crnt] [block nocrnt])]
+        blockcss (if current [block crnt] [block nocrnt])]
     [:a.conversation-block  
      (merge top
             {:on-click #(change-current id)})
@@ -313,7 +294,7 @@
      [stream-header {:icon v/menu-alt-1 :name stream-name}]
      [stream-menu]
      [:div blocks
-      (u/spread-by-id2 stream-block items :person/id opts)]]))
+      (u/spread-by-id2 stream-block items :person/id (select-keys opts [:change-current]))]]))
 
 
 (defn conversation-header-action [{:keys [icon]}]
@@ -350,7 +331,6 @@
 (defn conversation-part [{:keys [icon msg time me]}]
   (let [{:part/keys [top topreverse iconc cont msgc timec]} (twl conversation-css)
         top (if me  topreverse top)]
-    (println top)
     [:div top
      (if me
        [svg iconc (:value icon)]
@@ -378,7 +358,6 @@
         [update value action actionname] (if reply? 
                                            [update-msg reply-msg send-msg "Send"]
                                            [update-note note save-note "Save"])]
-     (tap> obj)   
      [:div top
       [:div header
        [:a (merge reply {:on-click #(change-type :reply)}) "Reply"]
@@ -475,7 +454,7 @@
    ::inbox                {:defaults {:change-current #(rf/dispatch [:inbox/set-active %])}
                            :state    (rf/subscribe [:inbox/main])
                            :render   inbox}
-   ::you-stream           {:defaults {:change-current #(rf/dispatch [:stream/set-current  %])}
+   ::you-stream           {:defaults {:change-current #(rf/dispatch [:stream/set-current %])}
                            :state    (rf/subscribe [:stream/main])
                            :render   you-stream}
    ::conversation-editor  {:defaults {:update-msg #(rf/dispatch [:conversation/update-msg %])
@@ -483,7 +462,7 @@
                                       :update-note #(rf/dispatch [:conversation/update-note %])
                                       :save-note #(println "note saved")
                                       :change-type #(rf/dispatch [:conversation/change-type %])}
-                           :state    (rf/subscribe [:conversation/main])
+                           :state    (rf/subscribe [:conversation/editor])
                            :render   conversation-editor}
    ::conversation-header  {:defaults {:change-title #(rf/dispatch [:conversation/change-title %])}
                            :state    (rf/subscribe [:conversation/header])

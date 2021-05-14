@@ -58,12 +58,19 @@
 (defn p-person-conversation [doxa stream]
   (dx/pull doxa [:* {:messages [:* {:icon [:*]} ]}] [:person/id stream]))
 
+(defn enrich-current [current idfn coll]
+  (map #(if (= current (idfn %))
+          (assoc % :current true)
+          %)
+       coll))
+
 (rf/reg-sub :sidebar/main
      :<- [:sidebar]
      :<- [:doxa]
    (fn [[sidebar doxa]]
-     (-> sidebar
-         (assoc  :sidebar1 (q-sb doxa 1))
+     (-> {}
+         (assoc  :sidebar1 
+                 (enrich-current (:active1 sidebar) :sb-item/id (q-sb doxa 1)))
          (assoc  :sidebar2 (q-sb doxa 2)))))   
 
 (rf/reg-sub :inbox/main
@@ -72,28 +79,36 @@
  (fn [[inbox doxa] _]
    {:items   (dx/pull doxa [:* {:icon [:value]}] (db/pull-ids :inbox/id doxa))
     :current (:current inbox)}))
- 
+
+
+
 (rf/reg-sub :stream/main
  :<- [:stream/current]  
  :<- [:inbox]
  :<- [:doxa]
  (fn [[stream inbox doxa] _]
-   (let [pers (q-stream doxa (:current inbox))
+   (let [current-inbox (:current inbox)
+         pers (q-stream doxa current-inbox)
          instream? (some #{stream} (map :person/id pers))
-         firstp (-> pers first :person/id)
-         ]
-    {:items   pers
-     :current  (if instream?
-                 (or stream firstp)
-                 firstp)
-     :stream-name    (-> (dx/pull doxa [:name] [:inbox/id (:current inbox)]) :name)
-     :inbox   (:current inbox)})))
+         firstp (-> pers first :person/id)]
+    {:items       (enrich-current stream :person/id pers)
+     :current     (if instream?
+                    (or stream firstp)
+                    firstp)
+     :stream-name (-> (dx/pull doxa [:name] [:inbox/id current-inbox]) :name)
+     :inbox       current-inbox})))
 
 (rf/reg-sub :conversation/main
  :<- [:stream/main]
  :<- [:doxa]
  (fn [[stream doxa] _]
+   
    (p-person-conversation doxa (:current stream))))
+
+(rf/reg-sub :conversation/editor
+  :<- [:conversation/main]
+   (fn [conversation _]
+     (dissoc conversation :messages :short :name :time :person/id :block-msg )))
 
 (rf/reg-sub :conversation/header
    :<- [:conversation/main] 
