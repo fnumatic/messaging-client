@@ -15,8 +15,8 @@
            integrant/integrant       {:mvn/version "0.8.0"},
            meander/epsilon           {:mvn/version "0.0.602"},
            nano-id/nano-id           {:mvn/version "1.0.0"},
-           ribelo/doxa ^:depot/ignore   {:git/url "https://github.com/ribelo/doxa"
-                                      :sha "83de44e00c33e65b92adad0ce4f60b411f42abcf"} 
+           ribelo/doxa               {:git/url "https://github.com/ribelo/doxa"
+                                      :sha "3f3f266be97c4b2b4d5b0d33fdf7b6d38ca5621f"} 
            re-pressed/re-pressed     {:mvn/version "0.3.1"
                                       :exclusions  [re-frame/re-frame reagent/reagent]},
            garden/garden             {:mvn/version "1.3.10"},
@@ -24,5 +24,5 @@
            metosin/reitit-frontend   {:mvn/version "0.5.13"},
            metosin/reitit            {:mvn/version "0.5.13"},
            re-frame/re-frame         {:mvn/version "1.2.0"},
-           thheller/shadow-cljs      {:mvn/version "2.12.5"}},
+           thheller/shadow-cljs      {:mvn/version "2.13.0"}},
  :paths   ["src" "resources"  "test/cljs"]}
