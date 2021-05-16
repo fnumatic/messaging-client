@@ -352,7 +352,7 @@
   (let [{:edit/keys [menu-icon]} (twl conversation-css)]
    [svg menu-icon data]))
 
-(defn conversation-editor [{:keys [reply-msg update-msg send-msg note update-note save-note reply? change-type] :as obj}]
+(defn conversation-editor [{:keys [person/id reply-msg update-msg send-msg note update-note save-note reply? change-type] :as obj}]
   (let [{:edit/keys [top header textarea active nonactive toolbar actions button]} (twl conversation-css)
         [reply notec ] (if reply? [active nonactive] [nonactive active])
         [update value action actionname] (if reply? 
@@ -365,7 +365,7 @@
       [:textarea
        (merge textarea
               {:value     value
-               :on-change (comp  update u/target-value)})]
+               :on-change (comp  (partial update id) u/target-value)})]
       [:div toolbar
        [:div actions
         (u/spread-by-order icon-cmp edit-menu-icons)]
@@ -459,7 +459,7 @@
                            :render   you-stream}
    ::conversation-editor  {:defaults {:update-msg #(rf/dispatch [:conversation/update-msg %])
                                       :send-msg  #(rf/dispatch [:conversation/send-msg-flow])
-                                      :update-note #(rf/dispatch [:conversation/update-note %])
+                                      :update-note (fn [id txt](rf/dispatch [:conversation/update-note id txt]))
                                       :save-note #(println "note saved")
                                       :change-type #(rf/dispatch [:conversation/change-type %])}
                            :state    (rf/subscribe [:conversation/editor])

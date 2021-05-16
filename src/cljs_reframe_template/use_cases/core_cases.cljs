@@ -102,13 +102,12 @@
  :<- [:stream/main]
  :<- [:doxa]
  (fn [[stream doxa] _]
-   
    (p-person-conversation doxa (:current stream))))
 
 (rf/reg-sub :conversation/editor
   :<- [:conversation/main]
    (fn [conversation _]
-     (dissoc conversation :messages :short :name :time :person/id :block-msg )))
+     (dissoc conversation :messages :short :name :time  :block-msg )))
 
 (rf/reg-sub :conversation/header
    :<- [:conversation/main] 
@@ -123,9 +122,13 @@
     (assoc-in db (conj db/msg-path :time) (time-stamp))
     db))
 
+(defn update-note [db [_ id what]]
+  (update db :db
+          #(dx/commit % [[:dx/update [:person/id id] assoc :note what]])))
+
 (rf/reg-event-db :msg/log [(rf/enrich enrich-time)] (sdb db/msg-path))
 (rf/reg-event-db :conversation/update-msg  (sdbj (conj current-conv :msg)))
-(rf/reg-event-db :conversation/update-note (sdbj (conj current-conv :note)))
+(rf/reg-event-db :conversation/update-note update-note)
 (rf/reg-event-db :conversation/change-type (sdbj (conj current-conv :reply?)  reply-type?))
 (rf/reg-event-db :conversation/change-title (sdbj (conj current-conv :header :title)))
 (rf/reg-event-db :conversation/send-msg (tudb  (conj current-conv :msg)
@@ -148,4 +151,5 @@
 
 (comment
   (tap>   @re-frame.db/app-db)
+  (dx/commit {} [[:dx/update [:person/id 1] assoc :aka "Tupen"]])
   ,)
