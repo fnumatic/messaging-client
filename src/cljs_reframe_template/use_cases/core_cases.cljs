@@ -106,8 +106,11 @@
 
 (rf/reg-sub :conversation/editor
   :<- [:conversation/main]
-   (fn [conversation _]
-     (dissoc conversation :messages :short :name :time  :block-msg )))
+  :<- [:conversations]          
+   (fn [[conversation conversations] _]
+     (merge
+      conversations
+      (dissoc conversation :messages :short :name :time  :block-msg))))
 
 (rf/reg-sub :conversation/header
    :<- [:conversation/main] 
@@ -122,14 +125,19 @@
     (assoc-in db (conj db/msg-path :time) (time-stamp))
     db))
 
-(defn update-note [db [_ id what]]
+(defn update-note [db [_ id data]]
   (update db :db
-          #(dx/commit % [[:dx/update [:person/id id] assoc :note what]])))
+          #(dx/commit % [[:dx/update [:person/id id] assoc :note data]])))
+
+(defn update-msg [db [_ id data]]
+  (println :update id data)
+  (update db :db
+          #(dx/commit % [[:dx/update [:person/id id] assoc :reply-msg data]])))
 
 (rf/reg-event-db :msg/log [(rf/enrich enrich-time)] (sdb db/msg-path))
-(rf/reg-event-db :conversation/update-msg  (sdbj (conj current-conv :msg)))
+(rf/reg-event-db :conversation/update-msg update-msg)
 (rf/reg-event-db :conversation/update-note update-note)
-(rf/reg-event-db :conversation/change-type (sdbj (conj current-conv :reply?)  reply-type?))
+(rf/reg-event-db :conversation/change-type (sdb [:conversations :reply?]  ))
 (rf/reg-event-db :conversation/change-title (sdbj (conj current-conv :header :title)))
 (rf/reg-event-db :conversation/send-msg (tudb  (conj current-conv :msg)
                                                (conj current-conv :items)

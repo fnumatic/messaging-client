@@ -354,8 +354,8 @@
 
 (defn conversation-editor [{:keys [person/id reply-msg update-msg send-msg note update-note save-note reply? change-type] :as obj}]
   (let [{:edit/keys [top header textarea active nonactive toolbar actions button]} (twl conversation-css)
-        [reply notec ] (if reply? [active nonactive] [nonactive active])
-        [update value action actionname] (if reply? 
+        [reply notec ] (if (= reply? :reply) [active nonactive] [nonactive active])
+        [update value action actionname] (if (= reply? :reply) 
                                            [update-msg reply-msg send-msg "Send"]
                                            [update-note note save-note "Save"])]
      [:div top
@@ -457,7 +457,7 @@
    ::you-stream           {:defaults {:change-current #(rf/dispatch [:stream/set-current %])}
                            :state    (rf/subscribe [:stream/main])
                            :render   you-stream}
-   ::conversation-editor  {:defaults {:update-msg #(rf/dispatch [:conversation/update-msg %])
+   ::conversation-editor  {:defaults {:update-msg #(rf/dispatch [:conversation/update-msg %1 %2])
                                       :send-msg  #(rf/dispatch [:conversation/send-msg-flow])
                                       :update-note (fn [id txt](rf/dispatch [:conversation/update-note id txt]))
                                       :save-note #(println "note saved")
