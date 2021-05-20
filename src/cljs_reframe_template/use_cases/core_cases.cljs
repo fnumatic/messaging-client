@@ -5,6 +5,7 @@
    [cljs-reframe-template.svg :as v]
    [meander.epsilon :as m]
    [ribelo.doxa :as dx]
+   [tick.alpha.api :as tck]
    [tools.reframetools :refer [sdb gdb sdbj tudb dispatch-n]]))
    ;[day8.re-frame.tracing :refer-macros [fn-traced defn-traced]]))
 
@@ -58,20 +59,32 @@
 (defn p-person-conversation [doxa stream]
   (dx/pull doxa [:* {:messages [:* {:icon [:*]} ]}] [:person/id stream]))
 
-(defn enrich-current [current idfn coll]
-  (map #(if (= current (idfn %))
-          (assoc % :current true)
-          %)
-       coll))
+
+(defn enrich-current [current idfn e]
+  (if (= current (idfn e))
+    (assoc e :current true)
+    e))
+
+(defn enrich-duration [e]
+  (update e :time #(as-> (tck/date %) d
+                         (tck/between d (tck/now))
+                         (tck/units d)
+                         (cond 
+                           (not= (:years d) 0) (str (:years d) "yr")
+                           (not= (:months d) 0) (str (:months d) "mth")
+                           (not= (:days d) 0) (str (:days d) "d")
+                           :else (str d))
+                       ,)))
 
 (rf/reg-sub :sidebar/main
      :<- [:sidebar]
      :<- [:doxa]
    (fn [[sidebar doxa]]
-     (-> {}
-         (assoc  :sidebar1 
-                 (enrich-current (:active1 sidebar) :sb-item/id (q-sb doxa 1)))
-         (assoc  :sidebar2 (q-sb doxa 2)))))   
+     (let [enrich (partial enrich-current (:active1 sidebar) :sb-item/id)]
+      (-> {}
+          (assoc  :sidebar1
+                  (map enrich (q-sb doxa 1)))
+          (assoc  :sidebar2 (q-sb doxa 2))))))   
 
 (rf/reg-sub :inbox/main
  :<- [:inbox]
@@ -90,8 +103,9 @@
    (let [current-inbox (:current inbox)
          pers (q-stream doxa current-inbox)
          instream? (some #{stream} (map :person/id pers))
-         firstp (-> pers first :person/id)]
-    {:items       (enrich-current stream :person/id pers)
+         firstp (-> pers first :person/id)
+         enrich  (partial enrich-current stream :person/id)]
+    {:items       (map (comp enrich-duration enrich) pers)
      :current     (if instream?
                     (or stream firstp)
                     firstp)
@@ -137,7 +151,7 @@
 (rf/reg-event-db :msg/log [(rf/enrich enrich-time)] (sdb db/msg-path))
 (rf/reg-event-db :conversation/update-msg update-msg)
 (rf/reg-event-db :conversation/update-note update-note)
-(rf/reg-event-db :conversation/change-type (sdb [:conversations :reply?]  ))
+(rf/reg-event-db :conversation/change-type (sdb [:conversations :reply?]))
 (rf/reg-event-db :conversation/change-title (sdbj (conj current-conv :header :title)))
 (rf/reg-event-db :conversation/send-msg (tudb  (conj current-conv :msg)
                                                (conj current-conv :items)

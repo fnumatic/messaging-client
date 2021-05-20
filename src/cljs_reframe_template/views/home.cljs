@@ -266,7 +266,7 @@
       [:div container
        [text-icon def-texticon short]
        [:strong personc name]
-       [:div timec (subs time 0 4)]]
+       [:div timec time]]
       [:div container
        [svg svg-small v/user-circle]
        [:div msgc block-msg]]]]))
