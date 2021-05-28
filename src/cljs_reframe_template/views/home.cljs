@@ -8,7 +8,7 @@
    [cljs-reframe-template.svg :as v :refer [svg]]
    [cljs-reframe-template.views.utils :as u]
    [integrant.core :as ig]
-   [cljs.pprint :as pp] ))
+   [cljs.pprint :as pp]))
 
 
 (defn component [{:keys [defaults on-mount state render ui]}]
@@ -177,7 +177,7 @@
   (let [{:icon/keys [textc]} component-css]
    [:div (tw textc opts) txt]))
 
-(defn sidebar-item [{:keys [sb-item/id count icon activate-view current] } ]
+(defn sidebar-item [{:keys [sb-item/id count icon activate-view current]}]
   (let [{:item/keys [small-overlay red-white top iconc]}  sidebar-css
         {:item/keys [nonicon]} (twl sidebar-css)
         top (twon current [top :bg-gray-100])

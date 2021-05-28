@@ -23,37 +23,36 @@
   (shuffle
    [{:icon short :msg "Some message text" :time "4hr ago"}
     {:type :hint :msg "You assigned this conversation to yourself 5d ago"}
-    {:icon [[:icon/id :icon/user-circle]] :msg "Some message text" :time "5hr ago" :me true}
-    {:icon [[:icon/id :icon/user-circle]] :msg "Some message text" :time "6hr ago" :me true}
+    {:icon [:icon/id :icon/user-circle] :msg "Some message text" :time "5hr ago" :me true}
+    {:icon [:icon/id :icon/user-circle] :msg "Some message text" :time "6hr ago" :me true}
     {:icon short :msg "Some message text" :time "6.5hr ago"}
-    {:icon [[:icon/id :icon/user-circle]] :msg "Some message text" :time "7hr ago" :me true}]))
+    {:icon [:icon/id :icon/user-circle] :msg "Some message text" :time "7hr ago" :me true}]))
 
 
 
 (def streams2
-  [{:icon  [[:icon/id :icon/user-circle]] :name "You" :count 5}
-   {:icon [[:icon/id :icon/at-symbol]] :name "Mentions" :count 0}
-   {:icon [[:icon/id :icon/user-circle]] :name "Unassigned" :count 2497}
-   {:icon [[:icon/id :icon/users]] :name "All" :count 5171}])
+  [{:icon [:icon/id :icon/user-circle] :name "You" :count 5}
+   {:icon [:icon/id :icon/at-symbol] :name "Mentions" :count 0}
+   {:icon [:icon/id :icon/user-circle] :name "Unassigned" :count 2497}
+   {:icon [:icon/id :icon/users] :name "All" :count 5171}])
 
 (def sidebar-items1
-  (->> 
-   
+  (->>
+
    [{}
-    {:icon [[:icon/id :icon/brief-case]] :count "5" :active? true}
-    {:icon [[:icon/id :icon/paper-airplane]]}
-    {:icon [[:icon/id :icon/users]]}
-    {:icon [[:icon/id :icon/book-open]]}
-    {:icon [[:icon/id :icon/chip]]}
-    {:icon [[:icon/id :icon/chart-bar]]}]
+    {:icon [:icon/id :icon/brief-case] :count "5" :active? true}
+    {:icon [:icon/id :icon/paper-airplane]}
+    {:icon [:icon/id :icon/users]}
+    {:icon [:icon/id :icon/book-open]}
+    {:icon [:icon/id :icon/chip]}
+    {:icon [:icon/id :icon/chart-bar]}]
    (map #(assoc % :sb 1))))
-   
 
 (def sidebar-items2
   (->>
-   [{:icon [[:icon/id :icon/template]]}
-    {:icon [[:icon/id :icon/bell]]}
-    {:icon [[:icon/id :icon/user-circle]]}]
+   [{:icon [:icon/id :icon/template]}
+    {:icon [:icon/id :icon/bell]}
+    {:icon [:icon/id :icon/user-circle]}]
    (map #(assoc % :sb 2))))
 
 
