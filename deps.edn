@@ -19,7 +19,6 @@
                                     :sha     "b56c56751dd74661ace55e2b3775396790a54813"} 
            re-pressed/re-pressed   {:mvn/version "0.3.1"
                                     :exclusions  [re-frame/re-frame reagent/reagent]},
-           garden/garden           {:mvn/version "1.3.10"},
            metosin/reitit-schema   {:mvn/version "0.5.13"},
            metosin/reitit-frontend {:mvn/version "0.5.13"},
            metosin/reitit          {:mvn/version "0.5.13"},

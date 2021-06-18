@@ -1,17 +1,7 @@
 (ns cljs-reframe-template.styles
   (:require
       [goog.dom :as gdom]
-      [garden.core :as g]))
-
-
-
-
-
-
-(def styles
-  [])
-
-
+      ))
 
 (defn inject-node! [old-node new-node document]
   (if old-node
@@ -38,6 +28,5 @@
 
 
 (defn inject-trace-styles [document]
-  (inject-inline-style document "--reframe-template--" (apply g/css styles))
   (inject-inline-link document "--app.css--"  "app.css"))
 
