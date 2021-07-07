@@ -66,7 +66,7 @@
     e))
 
 (defn enrich-duration [e]
-  (update e :time #(as-> (tck/date %) d
+  (update e :time #(as-> (tck/date (tck/parse %)) d
                          (tck/between d (tck/now))
                          (tck/units d)
                          (cond 
