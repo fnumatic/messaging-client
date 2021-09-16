@@ -49,11 +49,11 @@
 
 (defn q-sb [db_ sidebar]
   (dx/q
-   [:find [(pull [:* {:icon [:value]}] [:sb-item/id ?e]) ...]
+   [:find  (pull [:* {:icon [:value]}] [:sb-item/id ?e])
     :where [?e :sb ~sidebar]] db_))
 
 (defn q-stream [db_ inbox]
-  (dx/q [:find [(pull [:person/id :inbox :short :name :block-msg :time] [:person/id ?e]) ...]
+  (dx/q [:find  (pull [:person/id :inbox :short :name :block-msg :time] [:person/id ?e])
          :where [?e :inbox ~inbox] [?e :person/id]] db_))
 
 (defn p-person-conversation [doxa stream]
@@ -174,4 +174,6 @@
 (comment
   (tap>   @re-frame.db/app-db)
   (dx/commit {} [[:dx/update [:person/id 1] assoc :aka "Tupen"]])
+  (tap> (q-sb3  (:db @re-frame.db/app-db) 1))
+  (tap> (q-stream  (:db @re-frame.db/app-db) 1))
   ,)
