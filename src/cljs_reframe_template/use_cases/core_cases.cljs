@@ -4,7 +4,7 @@
    [cljs-reframe-template.db :as db]
    [cljs-reframe-template.svg :as v]
    [meander.epsilon :as m]
-   [ribelo.doxa :as dx]
+   [ribelo.doxa :as dx  ]
    [tick.alpha.api :as tck]
    [tools.reframetools :refer [sdb gdb sdbj tudb dispatch-n]]))
    ;[day8.re-frame.tracing :refer-macros [fn-traced defn-traced]]))
@@ -13,7 +13,7 @@
 (defn dbg [body]
   (tap> body)
   body)
-  
+
 (def current-conv
   [:conversations [:stream :current]])
 
@@ -37,7 +37,7 @@
 (rf/reg-sub ::re-pressed-example  (gdb [:re-pressed-example]))
 (rf/reg-sub :stream/current (gdb [:stream :current]))
 (rf/reg-sub :streamm (gdb [:stream]))
-(rf/reg-sub :inbox (gdb [:inbox]))  
+(rf/reg-sub :inbox (gdb [:inbox]))
 (rf/reg-sub :doxa (gdb [:db]))
 
 
@@ -57,7 +57,7 @@
          :where [?e :inbox ~inbox] [?e :person/id]] db_))
 
 (defn p-person-conversation [doxa stream]
-  (dx/pull doxa [:* {:messages [:* {:icon [:*]} ]}] [:person/id stream]))
+  (dx/pull doxa [:* {:messages [:* {:icon [:*]}]}] [:person/id stream]))
 
 
 (defn enrich-current [current idfn e]
@@ -67,69 +67,68 @@
 
 (defn enrich-duration [e]
   (update e :time #(as-> (tck/date (tck/parse %)) d
-                         (tck/between d (tck/now))
-                         (tck/units d)
-                         (cond 
-                           (not= (:years d) 0) (str (:years d) "yr")
-                           (not= (:months d) 0) (str (:months d) "mth")
-                           (not= (:days d) 0) (str (:days d) "d")
-                           :else (str d))
-                       ,)))
+                     (tck/between d (tck/now))
+                     (tck/units d)
+                     (cond
+                       (not= (:years d) 0) (str (:years d) "yr")
+                       (not= (:months d) 0) (str (:months d) "mth")
+                       (not= (:days d) 0) (str (:days d) "d")
+                       :else (str d)))))
 
 (rf/reg-sub :sidebar/main
-     :<- [:sidebar]
-     :<- [:doxa]
-   (fn [[sidebar doxa]]
-     (let [enrich (partial enrich-current (:active1 sidebar) :sb-item/id)]
-      (-> {}
-          (assoc  :sidebar1
-                  (map enrich (q-sb doxa 1)))
-          (assoc  :sidebar2 (q-sb doxa 2))))))   
+            :<- [:sidebar]
+            :<- [:doxa]
+            (fn [[sidebar doxa]]
+              (let [enrich (partial enrich-current (:active1 sidebar) :sb-item/id)]
+                (-> {}
+                    (assoc  :sidebar1
+                            (map enrich (q-sb doxa 1)))
+                    (assoc  :sidebar2 (q-sb doxa 2))))))
 
 (rf/reg-sub :inbox/main
- :<- [:inbox]
- :<- [:doxa]
- (fn [[inbox doxa] _]
-   {:items   (dx/pull doxa [:* {:icon [:value]}] (db/pull-ids :inbox/id doxa))
-    :current (:current inbox)}))
+            :<- [:inbox]
+            :<- [:doxa]
+            (fn [[inbox doxa] _]
+              {:items   (dx/pull doxa [:* {:icon [:value]}] (db/pull-ids :inbox/id doxa))
+               :current (:current inbox)}))
 
 
 
 (rf/reg-sub :stream/main
- :<- [:stream/current]  
- :<- [:inbox]
- :<- [:doxa]
- (fn [[stream inbox doxa] _]
-   (let [current-inbox (:current inbox)
-         pers (q-stream doxa current-inbox)
-         instream? (some #{stream} (map :person/id pers))
-         firstp (-> pers first :person/id)
-         enrich  (partial enrich-current stream :person/id)]
-    {:items       (map (comp enrich-duration enrich) pers)
-     :current     (if instream?
-                    (or stream firstp)
-                    firstp)
-     :stream-name (-> (dx/pull doxa [:name] [:inbox/id current-inbox]) :name)
-     :inbox       current-inbox})))
+            :<- [:stream/current]
+            :<- [:inbox]
+            :<- [:doxa]
+            (fn [[stream inbox doxa] _]
+              (let [current-inbox (:current inbox)
+                    pers (q-stream doxa current-inbox)
+                    instream? (some #{stream} (map :person/id pers))
+                    firstp (-> pers first :person/id)
+                    enrich  (partial enrich-current stream :person/id)]
+                {:items       (map (comp enrich-duration enrich) pers)
+                 :current     (if instream?
+                                (or stream firstp)
+                                firstp)
+                 :stream-name (-> (dx/pull doxa [:name] [:inbox/id current-inbox]) :name)
+                 :inbox       current-inbox})))
 
 (rf/reg-sub :conversation/main
- :<- [:stream/main]
- :<- [:doxa]
- (fn [[stream doxa] _]
-   (p-person-conversation doxa (:current stream))))
+            :<- [:stream/main]
+            :<- [:doxa]
+            (fn [[stream doxa] _]
+              (p-person-conversation doxa (:current stream))))
 
 (rf/reg-sub :conversation/editor
-  :<- [:conversation/main]
-  :<- [:conversations]          
-   (fn [[conversation conversations] _]
-     (merge
-      conversations
-      (dissoc conversation :messages :short :name :time  :block-msg))))
+            :<- [:conversation/main]
+            :<- [:conversations]
+            (fn [[conversation conversations] _]
+              (merge
+               conversations
+               (dissoc conversation :messages :short :name :time  :block-msg))))
 
 (rf/reg-sub :conversation/header
-   :<- [:conversation/main] 
-   (fn [d]
-     (header d)))
+            :<- [:conversation/main]
+            (fn [d]
+              (header d)))
 
 (defn- time-stamp []
   (.toLocaleTimeString (js/Date.)))
@@ -155,7 +154,7 @@
 (rf/reg-event-db :conversation/change-title (sdbj (conj current-conv :header :title)))
 (rf/reg-event-db :conversation/send-msg (tudb  (conj current-conv :msg)
                                                (conj current-conv :items)
-                                              append-msg))
+                                               append-msg))
 
 (rf/reg-event-fx :conversation/send-msg-flow (dispatch-n [:conversation/send-msg]
                                                          [:conversation/update-msg ""]
@@ -169,11 +168,54 @@
 (rf/reg-event-db :sidebar/set-active (sdb [:sidebar :active1]))
 (rf/reg-event-db :inbox/set-active (sdb [:inbox :current]))
 
+(comment
+ (defn q-sb3 [db_ sidebar]
+   (dx/q
+    [:find  [:sb-item/id ?e] :mapcat? true :pull {:q [:* {:icon [:value]}] :ident [:sb-item/id ?e]} ;;(pull [:* {:icon [:value]}] [:sb-item/id ?e])
+     :where [?e :sb ~sidebar]] db_))
+
+ (defn q-sb4 [db_ sidebar]
+   (dx/q
+    [:find  (pull [:* {:icon [:value]}] [:sb-item/id ?e]) ...
+     :where [?e :sb ~sidebar]] db_))
+
+ (defn q-sb5 [db_ sidebar]
+   (m/rewrite db_
+              {?table {?e {:sb ~sidebar}}}
+              ~(dx/pull ~db_ [:* {:icon [:value]}] [?table ?e]))))
 
 
 (comment
   (tap>   @re-frame.db/app-db)
   (dx/commit {} [[:dx/update [:person/id 1] assoc :aka "Tupen"]])
-  (tap> (q-sb3  (:db @re-frame.db/app-db) 1))
-  (tap> (q-stream  (:db @re-frame.db/app-db) 1))
-  ,)
+  (q-sb  (:db @re-frame.db/app-db) 1)
+  (q-sb4  (:db @re-frame.db/app-db) 1)
+  (q-sb5  (:db @re-frame.db/app-db) 1)
+  (->
+   ;;[:find  '[:sb-item/id ?e] :mapcat? true :pull {:q [:* {:icon [:value]}] :ident '[:sb-item/id ?e]}]
+   '[:find  [:sb-item/id ?e :pull {:q [:* {:icon [:value]}] :ident '[:sb-item/id ?e]}]]
+   (ribelo.doxa/parse-query))
+   ;dx/datalog->meander
+   
+  (dx/q
+   ;'[:find  [:sb-item/id ?e :pull {:q [:* {:icon [:value]}] :ident [:sb-item/id ?e]}]]
+     ;[:find   [:sb-item/id ?e] :pull  [:* {:icon [:value]}] :ident [:sb-item/id ?e]
+   [:find   [:sb-item/id ?e]  :ident [:sb-item/id ?e]
+    :where [?e :sb 1]]
+   (:db @re-frame.db/app-db))
+  (-> (dx/parse-query '[:where
+                        [?e :name ?name]
+                        [?e :age ?age]
+                        :in [?name] [?age]]
+                      ["Ivan" "Petr"]
+                      [20 30])
+      (dx/datalog->meander))
+  (tap> (q-stream  (:db @re-frame.db/app-db) 1)))
+
+
+(defn wrap [el txt]
+ (str "<" el ">" txt "</" el ">") )
+
+(def th (partial wrap "th"))
+
+(th "foobar")
