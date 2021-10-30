@@ -1,4 +1,4 @@
-(ns cljs-reframe-template.use-cases.core-cases
+(ns cljs-reframe-template.features.core-cases
   (:require
    [re-frame.core :as rf :refer [unwrap]]
    [cljs-reframe-template.db :as db]

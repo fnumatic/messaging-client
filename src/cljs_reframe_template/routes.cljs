@@ -5,7 +5,7 @@
     [reitit.frontend.history :as rtfh]
     [reitit.frontend.easy :as rtfe]
     [reitit.coercion.schema :as rsc]
-    [cljs-reframe-template.use-cases.core-cases :as ccases]
+    [cljs-reframe-template.features.core-cases :as ccases]
     [cljs-reframe-template.views.home :as home]
     [cljs-reframe-template.views.compo :as compo]))
 

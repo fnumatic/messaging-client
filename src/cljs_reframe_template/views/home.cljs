@@ -4,7 +4,7 @@
    [re-frame.core :as rf]
    [reagent.core :as r :refer [with-let]]
    [cljs-reframe-template.tools.reagent-hooks :refer [use-state]]
-   [cljs-reframe-template.use-cases.core-cases :as ccases]
+   [cljs-reframe-template.features.core-cases :as ccases]
    [cljs-reframe-template.svg :as v :refer [svg]]
    [cljs-reframe-template.views.utils :as u]
    [integrant.core :as ig]

@@ -2,7 +2,7 @@
   (:require
    [reagent.dom :refer [render]]
    [re-frame.core :as re-frame]
-   [cljs-reframe-template.use-cases.core-cases :as ccases]
+   [cljs-reframe-template.features.core-cases :as ccases]
    [cljs-reframe-template.routes :as routes]
    [cljs-reframe-template.views.home :as views]
    [cljs-reframe-template.config :as config]
