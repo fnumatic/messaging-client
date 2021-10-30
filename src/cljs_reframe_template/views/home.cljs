@@ -457,9 +457,9 @@
    ::you-stream           {:defaults {:change-current #(rf/dispatch [:stream/set-current %])}
                            :state    (rf/subscribe [:stream/main])
                            :render   you-stream}
-   ::conversation-editor  {:defaults {:update-msg #(rf/dispatch [:conversation/update-msg %1 %2])
+   ::conversation-editor  {:defaults {:update-msg #(rf/dispatch [:conversation/update-msg {:id %1 :data %2}])
                                       :send-msg  #(rf/dispatch [:conversation/send-msg-flow])
-                                      :update-note (fn [id txt](rf/dispatch [:conversation/update-note id txt]))
+                                      :update-note (fn [id txt](rf/dispatch [:conversation/update-note {:id id :data txt}]))
                                       :save-note #(println "note saved")
                                       :change-type #(rf/dispatch [:conversation/change-type %])}
                            :state    (rf/subscribe [:conversation/editor])

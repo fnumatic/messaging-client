@@ -1,6 +1,6 @@
 (ns cljs-reframe-template.use-cases.core-cases
   (:require
-   [re-frame.core :as rf]
+   [re-frame.core :as rf :refer [unwrap]]
    [cljs-reframe-template.db :as db]
    [cljs-reframe-template.svg :as v]
    [meander.epsilon :as m]
@@ -138,18 +138,18 @@
     (assoc-in db (conj db/msg-path :time) (time-stamp))
     db))
 
-(defn update-note [db [_ id data]]
+(defn update-note [db {:keys [id data]}]
   (update db :db
           #(dx/commit % [[:dx/update [:person/id id] assoc :note data]])))
 
-(defn update-msg [db [_ id data]]
+(defn update-msg [db {:keys [id data]}]
   (println :update id data)
   (update db :db
           #(dx/commit % [[:dx/update [:person/id id] assoc :reply-msg data]])))
 
 (rf/reg-event-db :msg/log [(rf/enrich enrich-time)] (sdb db/msg-path))
-(rf/reg-event-db :conversation/update-msg update-msg)
-(rf/reg-event-db :conversation/update-note update-note)
+(rf/reg-event-db :conversation/update-msg [unwrap] update-msg)
+(rf/reg-event-db :conversation/update-note [unwrap] update-note)
 (rf/reg-event-db :conversation/change-type (sdb [:conversations :reply?]))
 (rf/reg-event-db :conversation/change-title (sdbj (conj current-conv :header :title)))
 (rf/reg-event-db :conversation/send-msg (tudb  (conj current-conv :msg)
