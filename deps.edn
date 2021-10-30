@@ -15,8 +15,7 @@
            integrant/integrant     {:mvn/version "0.8.0"},
            meander/epsilon         {:mvn/version "0.0.650"},
            nano-id/nano-id         {:mvn/version "1.0.0"},
-           ribelo/doxa             {:git/url "https://github.com/ribelo/doxa"
-                                    :sha     "5fb2bfa622e4d1d3a8090e26dadc00d68416e8bc"} 
+           com.github.ribelo/doxa  {:mvn/version "0.0.36"} 
            re-pressed/re-pressed   {:mvn/version "0.3.1"
                                     :exclusions  [re-frame/re-frame reagent/reagent]},
            metosin/reitit-schema   {:mvn/version "0.5.15"},
