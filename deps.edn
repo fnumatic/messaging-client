@@ -3,25 +3,25 @@
            :runner   {:extra-deps {com.cognitect/test-runner {:git/url "https://github.com/cognitect-labs/test-runner",
                                                               :sha     "76568540e7f40268ad2b646110f237a60295fa3c"}},
                       :main-opts  ["-m" "cognitect.test-runner" "-d" "test"]},
-           :dev      {:extra-deps  {com.teknql/shadow-cljs-tailwind-jit {:mvn/version "0.2.2"},
+           :dev      {:extra-deps  {com.teknql/shadow-cljs-tailwind-jit {:mvn/version "1.0.0"},
                                     binaryage/devtools         {:mvn/version "1.0.3"},
                                     day8.re-frame/re-frame-10x {:mvn/version "1.1.10"}}
                       :extra-paths ["src" "env/dev" "target"]}
            :outdated {:replace-deps {olical/depot {:mvn/version "RELEASE"}}
                       :main-opts  ["-m" "depot.outdated.main"]}},
  :deps    {org.clojure/clojure     {:mvn/version "RELEASE"},
-           reagent/reagent         {:mvn/version "1.1.0"},
+           reagent/reagent         {:mvn/version "1.1.1"},
            ns-tracker/ns-tracker   {:mvn/version "0.4.0"},
            integrant/integrant     {:mvn/version "0.8.0"},
-           meander/epsilon         {:mvn/version "0.0.650"},
+           ;;meander/epsilon         {:mvn/version "0.0.650"},
            nano-id/nano-id         {:mvn/version "1.0.0"},
-           com.github.ribelo/doxa  {:mvn/version "0.0.36"} 
-           re-pressed/re-pressed   {:mvn/version "0.3.1"
+           com.github.ribelo/doxa  {:mvn/version "0.1.159"} 
+           re-pressed/re-pressed   {:mvn/version "0.3.2"
                                     :exclusions  [re-frame/re-frame reagent/reagent]},
-           metosin/reitit-schema   {:mvn/version "0.5.15"},
-           metosin/reitit-frontend {:mvn/version "0.5.15"},
-           metosin/reitit          {:mvn/version "0.5.15"},
-           re-frame/re-frame       {:mvn/version "1.2.0"},
-           tick/tick               {:mvn/version "0.4.32"}, 
-           thheller/shadow-cljs    {:mvn/version "2.15.12"}},
+           metosin/reitit-schema   {:mvn/version "0.5.18"},
+           metosin/reitit-frontend {:mvn/version "0.5.18"},
+           metosin/reitit          {:mvn/version "0.5.18"},
+           re-frame/re-frame       {:mvn/version "1.3.0"},
+           tick/tick               {:mvn/version "0.5.0"}, 
+           thheller/shadow-cljs    {:mvn/version "2.20.7"}},
  :paths   ["src" "resources"  "test/cljs"]}

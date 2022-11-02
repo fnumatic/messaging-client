@@ -1,15 +1,9 @@
 module.exports = {
     mode: 'jit',
-    purge:  
+    content:  
     ['./resources/**/*.html',
      './resources/**/*.js'
     ],
     
-    theme: {
-        extend: {},
-    },
-    variants: {
-
-    },
-    plugins: [],
+    
 }

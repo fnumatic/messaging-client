@@ -1,24 +1,18 @@
 {
     "scripts": {
-        "tw-dev": "NODE_ENV=development postcss resources/tw/style.css -o resources/public/app.css -w --verbose",
-        "tw-prod": "NODE_ENV=production postcss resources/tw/style.css -o resources/public/app.css",
-        "tw": "npx tailwind build resources/tw/style.css -o resources/public/app.css --no-autoprefixer",
-        "twp": "NODE_ENV=production npm run tw",
-        "watch:css": "onchange 'resources/tw/*css' -- npm run tw"
+        "tw": "npx tailwind -i resources/tw/style.css -o resources/public/app.css -w --no-autoprefixer",
+        "twp": "NODE_ENV=production npx tailwind -i resources/tw/style.css -o resources/public/app.css --no-autoprefixer"
     },
     "dependencies": {
-        "@js-joda/core": "4.3.1",
-        "@js-joda/locale_en-us": "4.4.0",
-        "@js-joda/timezone": "2.10.0",
-        "highlight.js": "11.3.1",
-        "react": "^17.0.2",
-        "react-dom": "^17.0.2"
+        "@js-joda/core": "5.4.2",
+        "@js-joda/locale_en-us": "4.8.6",
+        "@js-joda/timezone": "2.15.0",
+        "highlight.js": "11.6.0",
+        "react": "^18.2.0",
+        "react-dom": "^18.2.0"
     },
     "devDependencies": {
-        "autoprefixer": "^10.3.7",
-        "postcss": "^8.3.11",
-        "postcss-cli": "^9.0.1",
-        "shadow-cljs": "^2.15.12",
-        "tailwindcss": "^2.2.19"
+        "shadow-cljs": "^2.20.7",
+        "tailwindcss": "^3.2.1"
     }
 }
