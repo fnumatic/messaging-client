@@ -31,8 +31,8 @@
                          (run! (fn [f] (fs/copy f dest)) (fs/glob rp "**.{css}"))
                          nil))}
  ;;tailwind 
-  tailwind-dev {:task (shell "npm run tw-dev") :doc "Watch files, compiles with jit"}
-  tailwind-prod {:task (shell "npm run tw-prod")}
+  tailwind-dev {:task (shell "npm run tw") :doc "Watch files, compiles with jit"}
+  tailwind-prod {:task (shell "npm run twp")}
  ;;shadow report
   buildreport {:task (let [ file (str "buildreport_" (current-date-short) ".html")]
                        (shell (str "npx shadow-cljs run shadow.cljs.build-report app " file)))}}}
