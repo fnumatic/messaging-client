@@ -113,7 +113,10 @@
    :db (dx/create-dx {} doxadb)})
 
 (defn pull-ids [id db]
-  (mapv #(-> [id %]) (keys (get db id))))
+  (dx/q 
+   `[:find [?e ...]
+     :where [?e ~id]]
+   db))
 (def dummy
   (-> {}
       (dx/create-dx (map #(-> {:icon/id (first %) :value (second %)}) td/icons))

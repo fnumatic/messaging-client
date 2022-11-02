@@ -50,7 +50,7 @@
 
 
 (defn q-sb [db_ sidebar]
-  (dxt/query-pull db_
+  (dxt/query-pull-s db_
    `[:* {:icon [:value]}]
    `[:find [?e ...]
      :where [?e :sb ~sidebar]]))
@@ -94,7 +94,8 @@
             :<- [:inbox]
             :<- [:doxa]
             (fn [[inbox doxa] _]
-              {:items   (dx/pull doxa [:* {:icon [:value]}] (db/pull-ids :inbox/id doxa))
+              {:items   (dxt/query-pull-s doxa [:* {:icon [:value]}] (dxt/q-entity :inbox/id))
+                        
                :current (:current inbox)}))
 
 
@@ -187,11 +188,16 @@
   (dx/commit {} [[:dx/update [:person/id 1] assoc :aka "Tupen"]])
   (q-sb  (:db @re-frame.db/app-db) 1)
   (q-sb3_  (:db @re-frame.db/app-db) 1)
-  (dx/q 
-   `[:find    [?e ...]
-     :where [?e :sb 1]]
-   (:db @re-frame.db/app-db))
-   ;dx/datalog->meander
+  (sort-by second
+   (dx/q 
+     `[:find    [?e ...]
+       :where [?e :sb 1]]
+     (:db @re-frame.db/app-db))
+   (dx/q
+    `[:find [?e ...]
+      :where [?e :sb-item/id]]
+    (:db @re-frame.db/app-db)))  
+  ;dx/datalog->meander
   
   (tap> (q-stream  (:db @re-frame.db/app-db) 1)))
 
