@@ -1,8 +1,8 @@
 (ns cljs-reframe-template.db
-  (:require [cljs-reframe-template.svg :as v]
-            [ribelo.doxa :as dx]
+  (:require [cljs-reframe-template.testdata :as td]
             [nano-id.core :refer [nano-id]]
-            [cljs-reframe-template.testdata :as td]))
+            re-frame.db
+            [ribelo.doxa :as dx]))
 
 
 (def msg-path [:ui :lastmsg])
@@ -70,9 +70,9 @@
    ["Brand" "S&T"]
    ["ID" "333222333"]])
 
-(defn month-diff [d1 d2]
-  (+ (- (.getMonth d2) (.getMonth d1))
-     (* 12 (- (.getFullYear d2) (.getFullYear d1)))))
+#_(defn month-diff [d1 d2]
+    (+ (- (.getMonth d2) (.getMonth d1))
+       (* 12 (- (.getFullYear d2) (.getFullYear d1)))))
 
 
 (defn create-message
@@ -99,43 +99,44 @@
    (map #(-> {:icon/id (first %) :value (second %)}) td/icons)
    (indexi-fy streams2 :inbox/id)
    (indexi-fy (concat sidebar-items1 sidebar-items2) :sb-item/id)
-   (map #(create-person-with-data 0) (range 0 10))
-   (map #(create-person-with-data 1) (range 0 10))
-   (map #(create-person-with-data 2) (range 0 10))))
+   (map (fn [_] (create-person-with-data 0)) (range 0 10))
+   (map (fn [_] (create-person-with-data 1)) (range 0 10))
+   (map (fn [_] (create-person-with-data 2)) (range 0 10))))
 
 (def default-db
-  
+
   {;;:icons               td/icons
    :stream              {:current nil}
    :inbox               {:current 0}
    :sidebar             {:active1 1}
    :conversation-detail {:items details-items}
-   :db (dx/db-with {} doxadb)})
+   :db (dx/create-dx {} doxadb)})
 
 (defn pull-ids [id db]
   (mapv #(-> [id %]) (keys (get db id))))
 (def dummy
   (-> {}
-      (dx/db-with (map #(-> {:icon/id (first %) :value (second %)}) td/icons))
-      (dx/db-with (indexi-fy streams2 :inbox/id))))
+      (dx/create-dx (map #(-> {:icon/id (first %) :value (second %)}) td/icons))
+      (dx/create-dx (indexi-fy streams2 :inbox/id))))
 
 (def icon-shape '[:name {:icon [:value]}])
 (defn ddb [] (:db @re-frame.db/app-db))
 #_:clj-kondo/ignore
 (comment
-   (tap> sidebar-items1)
-  
+  (tap> sidebar-items1)
+
   (tap>   @re-frame.db/app-db)
+  (tap> (ddb))
   dummy
-  (dx/q [:find ?e
-         :where [?e :count 2497]] dummy)
+  (dx/q '[:find ?e
+          :where [?e :count 2497]] dummy)
   ;;sidebar items
-  (dx/q [:find [(pull [:name {:icon [:value]}] [:sb-item/id ?e]) ...]
-         :where [?e :sb 2]] (ddb))
-  
+  (dx/q '[:find [(pull [:name {:icon [:value]}] [:sb-item/id ?e]) ...]
+          :where [?e :sb 2]] (ddb))
+
   ;;persons for stream
-  (dx/q [:find [(pull [:inbox :short :name] [:person/id ?e]) ...]
-         :where [?e :inbox 0] [?e :person/id]] (ddb))
+  (dx/q '[:find [(pull [:inbox :short :name] [:person/id ?e]) ...]
+          :where [?e :inbox 0] [?e :person/id]] (ddb))
   ;;specific inbox
   (dx/pull (ddb) [:name] [:inbox/id 0])
 
@@ -148,10 +149,10 @@
   (nano-id)
   (dx/haul dummy :inbox/id)
   (dx/commit {} [[:dx/put {:db/id 1 :name "foo"}]])
-  (dx/db-with {}
-              (map  td/create-person (range 1 10)))
+  (dx/create-dx {}
+                (map  td/create-person (range 1 10)))
 
-  (dx/db-with {}
-              (map  create-message (range 10 20))))
-  
-  
+  (dx/create-dx {}
+                (map  create-message (range 10 20))))
+
+

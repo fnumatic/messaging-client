@@ -3,9 +3,11 @@
    [re-frame.core :as rf :refer [unwrap]]
    [cljs-reframe-template.db :as db]
    [cljs-reframe-template.svg :as v]
-   [meander.epsilon :as m]
-   [ribelo.doxa :as dx  ]
-   [tick.alpha.api :as tck]
+   ;;[meander.epsilon :as m]
+   [ribelo.doxa :as dx]
+   [tools.doxatools :as dxt]
+   ;;[tick.alpha.api :as tck]
+   [tick.core :as tck]
    [tools.reframetools :refer [sdb gdb sdbj tudb dispatch-n]]))
    ;[day8.re-frame.tracing :refer-macros [fn-traced defn-traced]]))
 
@@ -48,13 +50,16 @@
 
 
 (defn q-sb [db_ sidebar]
-  (dx/q
-   [:find  (pull [:* {:icon [:value]}] [:sb-item/id ?e])
-    :where [?e :sb ~sidebar]] db_))
+  (dxt/query-pull db_
+   `[:* {:icon [:value]}]
+   `[:find [?e ...]
+     :where [?e :sb ~sidebar]]))
 
 (defn q-stream [db_ inbox]
-  (dx/q [:find  (pull [:person/id :inbox :short :name :block-msg :time] [:person/id ?e])
-         :where [?e :inbox ~inbox] [?e :person/id]] db_))
+  (dxt/query-pull db_
+   `[:person/id :inbox :short :name :block-msg :time]
+   `[:find    [?e ...]
+     :where [?e :inbox ~inbox] [?e :person/id]]))
 
 (defn p-person-conversation [doxa stream]
   (dx/pull doxa [:* {:messages [:* {:icon [:*]}]}] [:person/id stream]))
@@ -66,7 +71,7 @@
     e))
 
 (defn enrich-duration [e]
-  (update e :time #(as-> (tck/date (tck/parse %)) d
+  (update e :time #(as-> (tck/date-time %) d
                      (tck/between d (tck/now))
                      (tck/units d)
                      (cond
@@ -143,7 +148,6 @@
           #(dx/commit % [[:dx/update [:person/id id] assoc :note data]])))
 
 (defn update-msg [db {:keys [id data]}]
-  (println :update id data)
   (update db :db
           #(dx/commit % [[:dx/update [:person/id id] assoc :reply-msg data]])))
 
@@ -169,52 +173,31 @@
 (rf/reg-event-db :inbox/set-active (sdb [:inbox :current]))
 
 (comment
- (defn q-sb3 [db_ sidebar]
-   (dx/q
-    [:find  [:sb-item/id ?e] :mapcat? true :pull {:q [:* {:icon [:value]}] :ident [:sb-item/id ?e]} ;;(pull [:* {:icon [:value]}] [:sb-item/id ?e])
-     :where [?e :sb ~sidebar]] db_))
-
- (defn q-sb4 [db_ sidebar]
-   (dx/q
-    [:find  (pull [:* {:icon [:value]}] [:sb-item/id ?e]) ...
-     :where [?e :sb ~sidebar]] db_))
-
- (defn q-sb5 [db_ sidebar]
-   (m/rewrite db_
-              {?table {?e {:sb ~sidebar}}}
-              ~(dx/pull ~db_ [:* {:icon [:value]}] [?table ?e]))))
+  
+ 
+  (defn q-sb3_ [db_ sidebar]
+    (dxt/query-pull db_ 
+                `[:* {:icon [:value]}]
+                `[:find   ?e 
+                  :where [?e :sb ~sidebar]]))) 
 
 
 (comment
   (tap>   @re-frame.db/app-db)
   (dx/commit {} [[:dx/update [:person/id 1] assoc :aka "Tupen"]])
   (q-sb  (:db @re-frame.db/app-db) 1)
-  (q-sb4  (:db @re-frame.db/app-db) 1)
-  (q-sb5  (:db @re-frame.db/app-db) 1)
-  (->
-   ;;[:find  '[:sb-item/id ?e] :mapcat? true :pull {:q [:* {:icon [:value]}] :ident '[:sb-item/id ?e]}]
-   '[:find  [:sb-item/id ?e :pull {:q [:* {:icon [:value]}] :ident '[:sb-item/id ?e]}]]
-   (ribelo.doxa/parse-query))
-   ;dx/datalog->meander
-   
-  (dx/q
-   ;'[:find  [:sb-item/id ?e :pull {:q [:* {:icon [:value]}] :ident [:sb-item/id ?e]}]]
-     ;[:find   [:sb-item/id ?e] :pull  [:* {:icon [:value]}] :ident [:sb-item/id ?e]
-   [:find   [:sb-item/id ?e]  :ident [:sb-item/id ?e]
-    :where [?e :sb 1]]
+  (q-sb3_  (:db @re-frame.db/app-db) 1)
+  (dx/q 
+   `[:find    [?e ...]
+     :where [?e :sb 1]]
    (:db @re-frame.db/app-db))
-  (-> (dx/parse-query '[:where
-                        [?e :name ?name]
-                        [?e :age ?age]
-                        :in [?name] [?age]]
-                      ["Ivan" "Petr"]
-                      [20 30])
-      (dx/datalog->meander))
+   ;dx/datalog->meander
+  
   (tap> (q-stream  (:db @re-frame.db/app-db) 1)))
 
 
 (defn wrap [el txt]
- (str "<" el ">" txt "</" el ">") )
+ (str "<" el ">" txt "</" el ">"))
 
 (def th (partial wrap "th"))
 
