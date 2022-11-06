@@ -55,8 +55,11 @@
    `[:find [?e ...]
      :where [?e :sb ~sidebar]]))
 
+(defn q-inbox [db_]
+  (dxt/query-pull-s   db_ [:* {:icon [:value]}] (dxt/q-entity :inbox/id)))
+
 (defn q-stream [db_ inbox]
-  (dxt/query-pull db_
+  (dxt/query-pull (dx/table db_ :person/id)
    `[:person/id :inbox :short :name :block-msg :time]
    `[:find    [?e ...]
      :where [?e :inbox ~inbox] [?e :person/id]]))
@@ -80,6 +83,10 @@
                        (not= (:days d) 0) (str (:days d) "d")
                        :else (str d)))))
 
+(defn enrich-inbox-count [db inbox]
+  (let [cnt #(count (q-stream db (:inbox/id %)))]
+    (assoc inbox :count (cnt inbox))))
+
 (rf/reg-sub :sidebar/main
             :<- [:sidebar]
             :<- [:doxa]
@@ -94,9 +101,9 @@
             :<- [:inbox]
             :<- [:doxa]
             (fn [[inbox doxa] _]
-              {:items   (dxt/query-pull-s doxa [:* {:icon [:value]}] (dxt/q-entity :inbox/id))
-                        
-               :current (:current inbox)}))
+             (let [items (q-inbox doxa)]
+               {:items   (map (partial enrich-inbox-count doxa) items)
+                :current (:current inbox)})))
 
 
 
@@ -114,6 +121,7 @@
                  :current     (if instream?
                                 (or stream firstp)
                                 firstp)
+                 :count (count pers)
                  :stream-name (-> (dx/pull doxa [:name] [:inbox/id current-inbox]) :name)
                  :inbox       current-inbox})))
 
@@ -192,14 +200,21 @@
    (dx/q 
      `[:find    [?e ...]
        :where [?e :sb 1]]
-     (:db @re-frame.db/app-db))
+     (:db @re-frame.db/app-db)))
+  (dx/q
+   `[:find  ?e   ?f
+     :where [?e :inbox/id] [?p_ :person/id ?f]] 
+      
+   (:db @re-frame.db/app-db)
    (dx/q
-    `[:find [?e ...]
-      :where [?e :sb-item/id]]
+    `[:find  (count ?e) 
+      :where [?e :inbox/id]]
     (:db @re-frame.db/app-db)))  
   ;dx/datalog->meander
   
-  (tap> (q-stream  (:db @re-frame.db/app-db) 1)))
+  (tap> (q-stream  (:db @re-frame.db/app-db) 1))
+  
+  ,)
 
 
 (defn wrap [el txt]

@@ -88,11 +88,11 @@
 (defn create-messages [short]
   (nanoid-fy (conversations short)))
 
-(defn create-person-with-data [inbox]
+(defn create-person-with-data [inbox-id]
   (let [p (td/create-person)]
     (-> p
         (assoc :messages  (create-messages (:short p)))
-        (assoc :inbox inbox))))
+        (assoc :inbox inbox-id))))
 
 (def doxadb
   (concat

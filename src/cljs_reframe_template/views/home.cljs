@@ -277,22 +277,22 @@
      [svg svgc icon]
      [:h1 h1 name]]))
 
-(defn stream-menu []
+(defn stream-menu [count]
   (let [{:menu/keys [top container]} (twl stream-css)]
     [:div top
      [:div container
       [svg {} v/brief-case]
-      [:div 5]
+      [:div count]
       [svg {} v/chevron-down]]
      [:div container
       [:div "newest"]
       [svg {} v/chevron-down]]]))
 
-(defn you-stream [{:keys [items stream-name ] :as opts}]
+(defn you-stream [{:keys [items stream-name count] :as opts}]
   (let [{:you/keys [top blocks]} (twl stream-css)]
     [:div#you-stream top
      [stream-header {:icon v/menu-alt-1 :name stream-name}]
-     [stream-menu]
+     [stream-menu count]
      [:div blocks
       (u/spread-by-id2 stream-block items :person/id (select-keys opts [:change-current]))]]))
 
