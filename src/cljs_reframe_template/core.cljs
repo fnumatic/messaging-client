@@ -1,12 +1,14 @@
 (ns ^:figwheel-hooks cljs-reframe-template.core
-  (:require
-   [reagent.dom :refer [render]]
-   [re-frame.core :as re-frame]
-   [cljs-reframe-template.features.core-cases :as ccases]
-   [cljs-reframe-template.routes :as routes]
-   [cljs-reframe-template.views.home :as views]
-   [cljs-reframe-template.config :as config]
-   [cljs-reframe-template.styles :as styl]))
+  (:require ["react-dom/client" :refer [createRoot]]
+            [cljs-reframe-template.config :as config]
+            [cljs-reframe-template.features.core-cases :as ccases]
+            [cljs-reframe-template.routes :as routes]
+            [cljs-reframe-template.styles :as styl]
+            [cljs-reframe-template.views.home :as views]
+            [goog.dom :as gdom]
+            [re-frame.core :as re-frame]
+            [reagent.core :as r]
+            ))
 
 
 
@@ -15,13 +17,14 @@
     (enable-console-print!)
     (println "dev mode")))
 
+(defonce root (createRoot (gdom/getElement "app")))
+
 (defn mount-root []
   (println "mount")
   (re-frame/clear-subscription-cache!)
   (styl/inject-trace-styles js/document)
-  (render [views/main-panel]
-          (.getElementById js/document "app")
-          (reagent.core/create-compiler {:function-components true})))
+  (.render root (r/as-element [views/main-panel]))
+  )
 
 (defn ^:after-load re-render []
   (mount-root))
