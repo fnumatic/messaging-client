@@ -8,10 +8,10 @@
    [tools.doxatools :as dxt]
    ;;[tick.alpha.api :as tck]
    [tick.core :as tck]
-   [tools.reframetools :refer [sdb gdb sdbj tudb dispatch-n]]
+   [tools.reframetools :refer [sdb gdb sdbj sdbx tudb dispatch-n]]
    [medley.core :refer [assoc-some]]
-   [debux.cs.core :as d :refer-macros [dbg dbgn break]]
-))
+   [debux.cs.core :as d :refer-macros [dbg dbgn break]]))
+
    ;[day8.re-frame.tracing :refer-macros [fn-traced defn-traced]]))
 
 
@@ -55,7 +55,7 @@
                         :where [?e :sb ~sidebar-id]])
    (map (partial enrich-current-entity active-sidebar :sb-item/id))))
 
-(defn q-all-streams [db_ ]
+(defn q-all-streams [db_]
   (dxt/query-pull (dx/table db_ :person/id)
                   `[:person/id :inbox :short :name :block-msg :time]
                   `[:find    [?e ...]
@@ -66,13 +66,13 @@
      :where [?e :inbox ~inbox] [?e :person/id]]
    (dx/table db_ :person/id)))
 
-(defn q-stream [db_ inbox stream]
+(defn q-stream [db_ inbox]
   (->>
    (dxt/query-pull (dx/table db_ :person/id)
-                    `[:person/id :inbox :short :name :block-msg :time]
+                   `[:person/id :inbox :short :name :block-msg :time]
                     `[:find    [?e ...]
-                      :where [?e :inbox ~inbox] [?e :person/id]])
-   (map (partial enrich-current-entity stream :person/id))))
+                      :where [?e :inbox ~inbox] [?e :person/id]])))
+   
 
 (defn all-inbox? [inbox]
   (= inbox 3))
@@ -82,13 +82,13 @@
                #(q-all-streams db)
                #(q-stream_ db %))]
    (->> (:inbox/id inbox)
-       (q-fn )
+       (q-fn)
        count 
        (assoc inbox :count))))
 
 (defn q-inbox [db_]
   (->> (dxt/query-pull-s   db_ [:* {:icon [:value]}] (dxt/q-entity :inbox/id))
-       (map (partial enrich-inbox-count db_)) ))
+       (map (partial enrich-inbox-count db_))))
 
 (defn p-person-conversation [doxa stream]
   (dx/pull doxa [:* {:messages [:* {:icon [:*]}]}] [:person/id stream]))
@@ -118,7 +118,10 @@
               {:items   (q-inbox doxa)
                :current (:current inbox)}))
 
-
+(defn q-stream2 [inbox db]
+ (if (all-inbox? inbox)
+   (q-all-streams db)
+   (q-stream db inbox)))
 
 (rf/reg-sub :stream/main
             :<- [:stream/current]
@@ -126,16 +129,14 @@
             :<- [:doxa]
             (fn [[stream inbox doxa] _]
               (let [current-inbox (:current inbox)
-                    pers (if (all-inbox? current-inbox) 
-                           (q-all-streams doxa)
-                           (q-stream doxa current-inbox stream))
-                    instream? (some #{stream} (map :person/id pers))
-                    firstp (-> pers first :person/id)]
-                {:items       (map  enrich-duration pers)
-                 :current     (if instream?
-                                (or stream firstp)
-                                firstp)
-                 :count (count pers)
+                    stream (get stream current-inbox)
+                    pers (q-stream2 current-inbox doxa)
+                    firstp (-> pers first :person/id)
+                    enrich-current  (partial enrich-current-entity (or  stream firstp) :person/id)]
+                   
+                {:items       (map  (comp enrich-duration enrich-current) pers)
+                 :current     (or stream firstp)
+                 :count       (count pers)
                  :stream-name (-> (dx/pull doxa [:name] [:inbox/id current-inbox]) :name)
                  :inbox       current-inbox})))
 
@@ -189,9 +190,9 @@
 
 
 (rf/reg-event-db ::initialize-db (constantly db/default-db))
-(rf/reg-event-db ::set-active-panel [rf/debug] (sdb [:active-panel]))
+(rf/reg-event-db ::set-active-panel (sdb [:active-panel]))
 
-(rf/reg-event-db :stream/set-current (sdb [:stream :current]))
+(rf/reg-event-db :stream/set-current  (sdbx [:stream :current (comp first second)] (comp second second)))
 (rf/reg-event-db :sidebar/set-active (sdb [:sidebar :active1]))
 (rf/reg-event-db :inbox/set-active (sdb [:inbox :current]))
 
@@ -225,8 +226,8 @@
       :where [?e :inbox/id]]
     (:db @re-frame.db/app-db)))  
   ;dx/datalog->meander
-  (q-inbox (:db @re-frame.db/app-db) )
-  
+  (q-inbox (:db @re-frame.db/app-db))
+  (if nil :a :b)
   ,)
 
 
