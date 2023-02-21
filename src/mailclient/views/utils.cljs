@@ -1,4 +1,4 @@
-(ns cljs-reframe-template.views.utils)
+(ns mailclient.views.utils)
 
 
 (defn spread-by-id [compo coll & opts ]

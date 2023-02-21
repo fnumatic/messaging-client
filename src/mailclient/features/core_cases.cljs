@@ -1,8 +1,8 @@
-(ns cljs-reframe-template.features.core-cases
+(ns mailclientfeatures.core-cases
   (:require
    [re-frame.core :as rf :refer [unwrap]]
-   [cljs-reframe-template.db :as db]
-   [cljs-reframe-template.svg :as v]
+   [mailclient.db :as db]
+   [mailclient.svg :as v]
    ;;[meander.epsilon :as m]
    [ribelo.doxa :as dx]
    [tools.doxatools :as dxt]

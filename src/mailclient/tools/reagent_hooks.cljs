@@ -1,4 +1,4 @@
-(ns cljs-reframe-template.tools.reagent-hooks
+(ns mailclienttools.reagent-hooks
   (:require [reagent.core :as r]))
 
 

@@ -1,4 +1,4 @@
-(ns cljs-reframe-template.styles
+(ns mailclient.styles
   (:require
       [goog.dom :as gdom]
       ))

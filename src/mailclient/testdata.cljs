@@ -1,5 +1,5 @@
-(ns cljs-reframe-template.testdata
-  (:require [cljs-reframe-template.svg :as v]
+(ns mailclienttestdata
+  (:require [mailclient.svg :as v]
             [nano-id.core :refer [nano-id]]
             ))
 

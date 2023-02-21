@@ -1,5 +1,5 @@
-(ns cljs-reframe-template.db
-  (:require [cljs-reframe-template.testdata :as td]
+(ns mailclient.db
+  (:require [mailclient.testdata :as td]
             [nano-id.core :refer [nano-id]]
             re-frame.db
             [ribelo.doxa :as dx]))

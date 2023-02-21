@@ -1,4 +1,4 @@
-(ns cljs-reframe-template.views.compo)
+(ns mailclient.views.compo)
 
 (defn main []
     [:div

@@ -1,10 +1,10 @@
-(ns ^:figwheel-hooks cljs-reframe-template.core
+(ns ^:figwheel-hooks mailclient.core
   (:require 
-            [cljs-reframe-template.config :as config]
-            [cljs-reframe-template.features.core-cases :as ccases]
-            [cljs-reframe-template.routes :as routes]
-            [cljs-reframe-template.styles :as styl]
-            [cljs-reframe-template.views.home :as views]
+            [mailclient.config :as config]
+            [mailclient.features.core-cases :as ccases]
+            [mailclient.routes :as routes]
+            [mailclient.styles :as styl]
+            [mailclient.views.home :as views]
             [goog.dom :as gdom]
             [react :as react]
             [re-frame.core :as re-frame]

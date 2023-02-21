@@ -1,4 +1,4 @@
-(ns cljs-reframe-template.config)
+(ns mailclient.config)
 
 (def debug?
   ^boolean goog.DEBUG)

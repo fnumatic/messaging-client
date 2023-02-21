@@ -11,11 +11,11 @@
                                    :tailwind.css "./resources/tw/style.css"}
                 :compiler-options {:infer-externs :auto}
                 :modules          {
-                                   :main {:entries [cljs-reframe-template.core]
-                                          :init-fn cljs-reframe-template.core/init}}
+                                   :main {:entries [mailclient.core]
+                                          :init-fn mailclient.core/init}}
                 :devtools         {
                                    :http-port  8021
                                    :http-root  "resources/public/"
-                                   :after-load cljs-reframe-template.core/re-render
+                                   :after-load mailclient.core/re-render
                                    :preloads   [devtools.preload shadow.remote.runtime.cljs.browser]}}
           }}

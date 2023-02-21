@@ -1,6 +1,6 @@
-(ns cljs-reframe-template.svg
+(ns mailclient.svg
   (:require
-   [cljs-reframe-template.views.utils :as u]))
+   [mailclient.views.utils :as u]))
 
 
 
