@@ -1,4 +1,4 @@
-(ns mailclientfeatures.core-cases
+(ns mailclient.features.core-cases
   (:require
    [re-frame.core :as rf :refer [unwrap]]
    [mailclient.db :as db]

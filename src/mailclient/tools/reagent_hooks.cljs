@@ -1,4 +1,4 @@
-(ns mailclienttools.reagent-hooks
+(ns mailclient.tools.reagent-hooks
   (:require [reagent.core :as r]))
 
 

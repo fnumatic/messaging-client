@@ -1,4 +1,4 @@
-(ns mailclienttestdata
+(ns mailclient.testdata
   (:require [mailclient.svg :as v]
             [nano-id.core :refer [nano-id]]
             ))

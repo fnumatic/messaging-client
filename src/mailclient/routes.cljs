@@ -1,4 +1,4 @@
-(ns mailclientroutes
+(ns mailclient.routes
   (:require
     [re-frame.core :as rf]
     [reitit.frontend :as rtf]
