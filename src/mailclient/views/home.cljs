@@ -8,6 +8,7 @@
    [mailclient.svg :as v :refer [svg]]
    [mailclient.views.utils :as u]
    [integrant.core :as ig]
+   [tools.tailwindtools :refer [tw twon twl]]
    [cljs.pprint :as pp]))
 
 
@@ -34,28 +35,7 @@
   (let [active-route (rf/subscribe [::ccases/active-panel])]
     [show-panel @active-route]))
 
-(defn tw 
-  "nested coll of tw classes to :class map
-   [:foo [:bar :buzz]] -> {:class [:foo :bar :buzz]}"
-  [& classes]
-  {:class (flatten (apply concat classes))})
 
-(defn twon
- "tailwind on flag"
-  [flag coll]
-  (tw 
-   (if flag 
-     coll 
-     (first coll))))
-
-(defn twl 
-  "all colls on mapvalues to :class maps
-   {:foo [:bar]} -> {:foo {:class [:bar]}}"
-  [tw-map]
-  (reduce-kv
-   #(assoc %1 %2 (tw %3))
-   {}
-   tw-map))
 
 (def vbox [:flex :flex-col])
 (def hbox [:flex :flex-row])
