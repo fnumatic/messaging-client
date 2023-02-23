@@ -2,7 +2,6 @@
   (:require
     [re-frame.core :as rf]
     [reitit.frontend :as rtf]
-    [reitit.frontend.history :as rtfh]
     [reitit.frontend.easy :as rtfe]
     [reitit.coercion.schema :as rsc]
     [mailclient.features.core-cases :as ccases]

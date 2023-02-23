@@ -1,4 +1,6 @@
-(ns mailclient.views.utils)
+(ns mailclient.views.utils 
+  (:require [mailclient.views.tw-classes :refer [component-css]]
+            [tools.tailwindtools :refer [tw]]))
 
 
 (defn spread-by-id [compo coll & opts ]
@@ -20,3 +22,7 @@
 
 (defn target-value [evt]
   (-> evt .-target .-value)) 
+
+(defn text-icon [opts txt]
+  (let [{:icon/keys [textc]} component-css]
+    [:div (tw textc opts) txt]))
