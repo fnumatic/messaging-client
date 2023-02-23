@@ -3,7 +3,8 @@
             [mailclient.views.tw-classes :refer [bspread conversation-css
                                                  def-texticon hbox ic-x2]]
             [mailclient.views.utils :as u :refer [text-icon]]
-            [tools.tailwindtools :refer [tw twl]]))
+            [tools.tailwindtools :refer [tw twl]]
+            [tools.viewtools :refer [spread-by-order target-value]]))
 
 
 
@@ -50,10 +51,10 @@
      [:textarea
       (merge textarea
              {:value     value
-              :on-change (comp  (partial update id) u/target-value)})]
+              :on-change (comp  (partial update id) target-value)})]
      [:div toolbar
       [:div actions
-       (u/spread-by-order icon-cmp edit-menu-icons)]
+       (spread-by-order icon-cmp edit-menu-icons)]
       [:button (merge button {:on-click action}) actionname]]]))
 
 
@@ -68,7 +69,7 @@
        [:<>
         [header]
         [:div (merge main style)
-         (u/spread-by-order conversation-item messages)]
+         (spread-by-order conversation-item messages)]
         [editor]])]))
 
 
@@ -86,7 +87,7 @@
      v/cog]]
 
 
-   (u/spread-by-order conv-details-item details-items)])
+   (spread-by-order conv-details-item details-items)])
 
 
 (defn card-item [{:keys [icon keyw]}]
@@ -112,7 +113,7 @@
         "Nikola Tesla"]]
       [:div container
        [svg {} v/dots-vertical]]]
-     (u/spread-by-order card-item card-items)]))
+     (spread-by-order card-item card-items)]))
 
 (defn conversation-settings [{:keys [items]}]
   (let [{:settings/keys [top part1 container]} (twl conversation-css)]
@@ -152,6 +153,6 @@
                      {:type        "text"
                       :placeholder "Add conversation title"
                       :value       title
-                      :on-change   (comp change-title u/target-value)})]]
+                      :on-change   (comp change-title target-value)})]]
      [:div act-cont
-      (u/spread-by-order conversation-header-action actions)]]))
+      (spread-by-order conversation-header-action actions)]]))

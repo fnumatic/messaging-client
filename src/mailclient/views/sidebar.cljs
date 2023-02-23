@@ -2,7 +2,8 @@
   (:require [mailclient.svg :as v :refer [svg]]
             [mailclient.views.tw-classes :refer [sidebar-css]]
             [mailclient.views.utils :as u :refer [text-icon]]
-            [tools.tailwindtools :refer [twl twon]])
+            [tools.tailwindtools :refer [twl twon]]
+            [tools.viewtools :refer [spread-by-id2]])
   )
 
 
@@ -24,7 +25,7 @@
   (let [{:main/keys [top container]} (twl sidebar-css)]
     [:div#sidebar top
      [:div container
-      (u/spread-by-id2 sidebar-item sidebar1 :sb-item/id (dissoc opts :sidebar1 :sidebar2))]
+      (spread-by-id2 sidebar-item sidebar1 :sb-item/id (dissoc opts :sidebar1 :sidebar2))]
 
      [:div container
-      (u/spread-by-id2 sidebar-item sidebar2 :sb-item/id)]]))
+      (spread-by-id2 sidebar-item sidebar2 :sb-item/id)]]))

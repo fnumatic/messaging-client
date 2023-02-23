@@ -1,6 +1,5 @@
 (ns mailclient.svg
-  (:require
-   [mailclient.views.utils :as u]))
+  (:require [tools.viewtools :refer [spread-by-order]]))
 
 
 
@@ -75,5 +74,5 @@
                 :xmlns   "http://www.w3.org/2000/svg"}
                opts)
    (if (sequential? d) 
-     (u/spread-by-order path d)
+     (spread-by-order path d)
      [path d])])

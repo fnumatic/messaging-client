@@ -1,12 +1,10 @@
 (ns mailclient.views.inbox
-  (:require
-   [mailclient.tools.reagent-hooks :refer [use-state]]
-   [mailclient.svg :as v :refer [svg]]
-   [mailclient.views.utils :as u]
-   [tools.tailwindtools :refer [ twon twl]]
-   [reagent.core :as r ]
-   [mailclient.views.tw-classes :refer [inbox-css  ]]
-   ))
+  (:require [mailclient.svg :as v :refer [svg]]
+            [mailclient.tools.reagent-hooks :refer [use-state]]
+            [mailclient.views.tw-classes :refer [inbox-css]]
+            [reagent.core :as r ]
+            [tools.tailwindtools :refer [twl twon]]
+            [tools.viewtools :refer [spread-by-id2]]))
 
 
 
@@ -56,7 +54,7 @@
       [svg svgc v/search-icon]]
      [inbox-block {:title "Conversations" :open? true}
       [:<>
-       (u/spread-by-id2 inbox-view items :inbox/id opts)
+       (spread-by-id2 inbox-view items :inbox/id opts)
        [inbox-action {:icon v/plus :name "Create View"}]
        [inbox-view-expand {:msg "See 124 more" :action "Edit"}]]]
      [inbox-block {:title "Automation"}

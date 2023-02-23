@@ -2,7 +2,8 @@
   (:require [mailclient.svg :as v :refer [svg]]
             [mailclient.views.tw-classes :refer [def-texticon stream-css]]
             [mailclient.views.utils :as u :refer [text-icon]]
-            [tools.tailwindtools :refer [tw twl]])
+            [tools.tailwindtools :refer [tw twl]]
+            [tools.viewtools :refer [spread-by-id2]])
   )
 
 
@@ -46,4 +47,4 @@
      [stream-header {:icon v/menu-alt-1 :name stream-name}]
      [stream-menu count]
      [:div blocks
-      (u/spread-by-id2 stream-block items :person/id (select-keys opts [:change-current :inbox]))]]))
+      (spread-by-id2 stream-block items :person/id (select-keys opts [:change-current :inbox]))]]))
